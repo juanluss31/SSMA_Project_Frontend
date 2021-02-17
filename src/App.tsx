@@ -23,22 +23,40 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 import Login from './pages/login/Login';
+import React, {useContext, useState} from 'react';
+
+export const LoginContext = React.createContext({
+  updateDisabled: (value: boolean) => {},
+});
 
 const App: React.FC = () => {
+
+  const [disabled, setDisabled] = useState<boolean>(true);
+
+  const updateDisabled = (value: boolean) => {
+    setDisabled(value);
+  }
+
   return (
     <IonApp>
       <IonReactRouter>
-          <IonRouterOutlet id="main">
-            <Route path="/" exact={true}>
-              <Redirect to="/page/Login" />
-            </Route>
-            <Route path="/page/Login" exact={true}>
-              <Login />
-            </Route>
-            {/* <Route path="/page/:name" exact={true}>
-              <Page />
-            </Route> */}
-          </IonRouterOutlet>
+      {/* <Menu /> */}
+      <IonSplitPane contentId="main" disabled={disabled}>
+        <Menu />
+          <LoginContext.Provider value={{updateDisabled}}>
+            <IonRouterOutlet id="main">
+              <Route path="/" exact={true}>
+                <Redirect to="/login" />
+              </Route>
+              <Route path="/login" exact={true}>
+                <Login />
+              </Route>
+              <Route path="/page/:name" exact={true}>
+                <Page />
+              </Route>
+            </IonRouterOutlet>
+          </LoginContext.Provider>
+      </IonSplitPane>
       </IonReactRouter>
     </IonApp>
   );

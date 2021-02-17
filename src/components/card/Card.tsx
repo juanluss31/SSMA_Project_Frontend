@@ -1,24 +1,50 @@
-import { IonCard, IonCardContent, IonCol, IonGrid, IonIcon, IonInput, IonItem, IonLabel, IonList, IonRow, IonButtons, IonButton } from '@ionic/react';
+import { IonCard, IonCardContent, IonCol, IonGrid, IonIcon, IonInput, IonItem, IonLabel, IonList, IonRow, IonButtons, IonButton, IonToast } from '@ionic/react';
 import { personCircle } from "ionicons/icons";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useMediaQuery } from 'react-responsive';
+import { useHistory } from 'react-router';
+import { LoginContext } from '../../App';
 
 import './Card.scss';
 
 const Card: React.FC = () => {
 
-    const [username, setUsername] = useState<string>();
-    const [password, setPassword] = useState<string>();
+    const [username, setUsername] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
     const [formStyle, setFormStyle] = useState<string>();
+    const [showToast, setShowToast] = useState<boolean>(false);
 
     const isMobile = useMediaQuery({ query: `(max-width: 699px)` });
+    const history = useHistory();
+    const loginContext = useContext(LoginContext);
 
     useEffect(() => {
         isMobile ? setFormStyle("inputFormMobile") : setFormStyle("inputFormWeb");
     }, [])
 
+    const handleSubmit = () => {
+        if(username != '' && password != '' && username && password){
+            console.log("El usuario y la contraseña no están vacíos.");
+            loginContext.updateDisabled(false);
+            history.push("/page/dashboard");
+        }
+        else{
+            console.log("Usuario y contraseña no están rellenos");
+            setShowToast(true);
+        }
+    }
+
     return(
         <IonCard className={formStyle}>
+            <IonToast
+                id="toast"
+                isOpen={showToast}
+                onDidDismiss={() => setShowToast(false)}
+                message="Usuario o contraseña incorrecto."
+                duration={1000}
+                color="primary"
+                position="top"
+            />
             <IonCardContent>
                 <IonGrid>
                     <IonRow>
@@ -44,7 +70,7 @@ const Card: React.FC = () => {
                         </IonCol>
                     </IonRow>
                 </IonGrid>
-                <IonButton className="submitButton">Acceder</IonButton>
+                <IonButton className="submitButton" onClick={handleSubmit}>Acceder</IonButton>
             </IonCardContent>
         </IonCard>
     )
