@@ -33,18 +33,18 @@ const Card: React.FC = () => {
                         <IonCol>
                             <IonList>
                                 <IonItem>
-                                    <IonLabel position="floating">Usuario:</IonLabel>
-                                    <IonInput value={username} placeholder="Introduzca su usuario" onIonChange={(e) => setUsername(e.detail.value!)} clearInput required pattern="text" />
+                                    <IonLabel position="floating" className="textLabel">Usuario:</IonLabel>
+                                    <IonInput value={username} placeholder="Introduzca su usuario" onIonChange={(e) => setUsername(e.detail.value!)} clearInput type="text" />
                                 </IonItem>
                                 <IonItem>
-                                <IonLabel position="floating">Contraseña:</IonLabel>
-                                    <IonInput value={password} placeholder="Introduzca su contraseña" onIonChange={(e) => setPassword(e.detail.value!)} clearInput required pattern="text" />
+                                    <IonLabel position="floating" className="textLabel">Contraseña:</IonLabel>
+                                    <IonInput value={password} placeholder="Introduzca su contraseña" onIonChange={(e) => setPassword(e.detail.value!)} clearInput type="password" />
                                 </IonItem>
                             </IonList>
                         </IonCol>
                     </IonRow>
                 </IonGrid>
-                <IonButton style={{color: "#FFFFFF"}}>Acceder</IonButton>
+                <IonButton className="submitButton">Acceder</IonButton>
             </IonCardContent>
         </IonCard>
     )
