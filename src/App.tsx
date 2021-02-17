@@ -22,12 +22,32 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import Login from './pages/login/Login';
 
 const App: React.FC = () => {
   return (
     <IonApp>
       <IonReactRouter>
-        <IonSplitPane contentId="main">
+          <IonRouterOutlet id="main">
+            <Route path="/" exact={true}>
+              <Redirect to="/page/Login" />
+            </Route>
+            <Route path="/page/Login" exact={true}>
+              <Login />
+            </Route>
+            {/* <Route path="/page/:name" exact={true}>
+              <Page />
+            </Route> */}
+          </IonRouterOutlet>
+      </IonReactRouter>
+    </IonApp>
+  );
+};
+
+export default App;
+
+
+{/* <IonSplitPane contentId="main">
           <Menu />
           <IonRouterOutlet id="main">
             <Route path="/" exact={true}>
@@ -37,10 +57,4 @@ const App: React.FC = () => {
               <Page />
             </Route>
           </IonRouterOutlet>
-        </IonSplitPane>
-      </IonReactRouter>
-    </IonApp>
-  );
-};
-
-export default App;
+        </IonSplitPane> */}

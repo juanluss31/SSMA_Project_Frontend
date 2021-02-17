@@ -1,0 +1,11 @@
+.inputForm {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+native-input,
+sc-ion-input-md {
+    margin-left: 2px;
+}
