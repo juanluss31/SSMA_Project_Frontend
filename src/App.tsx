@@ -24,6 +24,12 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 import Login from './pages/login/Login';
 import React, {useContext, useState} from 'react';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+
+const client = new ApolloClient({
+  uri: 'http://localhost:3000/graphql/',
+  cache: new InMemoryCache()
+})
 
 export const LoginContext = React.createContext({
   updateDisabled: (value: boolean) => {},
@@ -38,27 +44,29 @@ const App: React.FC = () => {
   }
 
   return (
-    <IonApp>
-      <IonReactRouter>
-      {/* <Menu /> */}
-      <IonSplitPane contentId="main" disabled={disabled}>
-        <Menu />
-          <LoginContext.Provider value={{updateDisabled}}>
-            <IonRouterOutlet id="main">
-              <Route path="/" exact={true}>
-                <Redirect to="/login" />
-              </Route>
-              <Route path="/login" exact={true}>
-                <Login />
-              </Route>
-              <Route path="/page/:name" exact={true}>
-                <Page />
-              </Route>
-            </IonRouterOutlet>
-          </LoginContext.Provider>
-      </IonSplitPane>
-      </IonReactRouter>
-    </IonApp>
+    <ApolloProvider client={client}>
+      <IonApp>
+        <IonReactRouter>
+        {/* <Menu /> */}
+        <IonSplitPane contentId="main" disabled={disabled}>
+          <Menu />
+            <LoginContext.Provider value={{updateDisabled}}>
+              <IonRouterOutlet id="main">
+                <Route path="/" exact={true}>
+                  <Redirect to="/login" />
+                </Route>
+                <Route path="/login" exact={true}>
+                  <Login />
+                </Route>
+                <Route path="/page/:name" exact={true}>
+                  <Page />
+                </Route>
+              </IonRouterOutlet>
+            </LoginContext.Provider>
+        </IonSplitPane>
+        </IonReactRouter>
+      </IonApp>
+    </ApolloProvider>
   );
 };
 
