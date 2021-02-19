@@ -6,17 +6,51 @@ import { useHistory } from 'react-router';
 import { LoginContext } from '../../App';
 
 import './Card.scss';
+import { useLoginLazyQuery } from '../../generated/graphql';
+import Loading from '../loading/loading';
+
+interface LoginCredentials {
+    username: string,
+    password: string
+}
 
 const Card: React.FC = () => {
 
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [credentials, setCredentials] = useState<LoginCredentials>({username: "", password: ""});
+    const [message, setMessage] = useState<string>('');
     const [formStyle, setFormStyle] = useState<string>();
     const [showToast, setShowToast] = useState<boolean>(false);
+    const [showLoading, setShowLoading] = useState<boolean>(false);
 
     const isMobile = useMediaQuery({ query: `(max-width: 699px)` });
     const history = useHistory();
     const loginContext = useContext(LoginContext);
+
+    const [login] = useLoginLazyQuery({
+        fetchPolicy: 'network-only',
+        variables: { username: credentials.username, password: credentials.password },
+        onCompleted: (response) => {
+            console.log("Se ha completado la query");
+            console.log(response);
+            setShowLoading(false);
+            if(response.login.username === "" || response.login.password === ""){
+                console.log("Credenciales incorrectos");
+                setMessage("Usuario o contraseña incorrecto.");
+                setShowToast(true);
+            }
+            else{
+                loginContext.updateDisabled(false);
+                history.push("/page/dashboard");
+            }   
+        },
+        onError: (error) => {
+            setShowLoading(false);
+            console.log("Ha ocurrido el siguiente error: ");
+            console.log(error);
+        }
+    })
 
     useEffect(() => {
         isMobile ? setFormStyle("inputFormMobile") : setFormStyle("inputFormWeb");
@@ -25,22 +59,24 @@ const Card: React.FC = () => {
     const handleSubmit = () => {
         if(username != '' && password != '' && username && password){
             console.log("El usuario y la contraseña no están vacíos.");
-            loginContext.updateDisabled(false);
-            history.push("/page/dashboard");
+            setShowLoading(true);
+            setCredentials({username: username, password: password});
+            login();
         }
-        else{
-            console.log("Usuario y contraseña no están rellenos");
+        else {
+            setMessage("El usuario y la contraseña no pueden estar vacíos.");
             setShowToast(true);
         }
     }
 
     return(
         <IonCard className={formStyle}>
+            { showLoading ? <Loading /> : void 0 }
             <IonToast
                 id="toast"
                 isOpen={showToast}
                 onDidDismiss={() => setShowToast(false)}
-                message="Usuario o contraseña incorrecto."
+                message={message}
                 duration={1000}
                 color="primary"
                 position="top"
