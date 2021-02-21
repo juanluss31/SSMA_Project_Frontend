@@ -24,11 +24,32 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 import Login from './pages/login/Login';
 import React, {useContext, useState} from 'react';
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { ApolloClient, ApolloProvider, createHttpLink, InMemoryCache } from '@apollo/client';
+import { setContext } from "@apollo/client/link/context";
+
+//TODO existe una vulneribilidad de un paquete, pero es de una dependencia llamada immer, en la version 8.0.1 se arregla,
+// pero la dependencia de react no esta actualizada aun, cuando lo este gg isi.
+
+const httpLink = createHttpLink({
+  uri: '/graphql',
+});
+
+const authLink = setContext((_, { headers }) => {
+  // get the authentication token from local storage if it exists
+  const token = localStorage.getItem('token');
+  // return the headers to the context so httpLink can read them
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : "",
+    }
+  }
+});
 
 const client = new ApolloClient({
   uri: 'http://localhost:3000/graphql/',
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
+  link: authLink.concat(httpLink),
 })
 
 export const LoginContext = React.createContext({
