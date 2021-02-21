@@ -20,12 +20,13 @@ export type UserModel = {
   password: Scalars['String'];
   firstname: Scalars['String'];
   lastname: Scalars['String'];
+  counter: Scalars['Float'];
 };
 
 export type LoginModel = {
   __typename?: 'LoginModel';
-  username: Scalars['String'];
-  password: Scalars['String'];
+  accessToken: Scalars['String'];
+  refreshToken: Scalars['String'];
 };
 
 export type Query = {
@@ -33,6 +34,7 @@ export type Query = {
   getAllUsers: Array<UserModel>;
   getUser: UserModel;
   login: LoginModel;
+  validateToken: UserModel;
 };
 
 
@@ -66,33 +68,6 @@ export type MutationDeleteUserArgs = {
   username: Scalars['String'];
 };
 
-export type CreateUserMutationVariables = Exact<{
-  username: Scalars['String'];
-  password: Scalars['String'];
-  firstname: Scalars['String'];
-  lastname: Scalars['String'];
-}>;
-
-
-export type CreateUserMutation = (
-  { __typename?: 'Mutation' }
-  & { createUser: (
-    { __typename?: 'UserModel' }
-    & Pick<UserModel, 'id' | 'username' | 'password' | 'firstname' | 'lastname'>
-  ) }
-);
-
-export type GetAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetAllUsersQuery = (
-  { __typename?: 'Query' }
-  & { getAllUsers: Array<(
-    { __typename?: 'UserModel' }
-    & Pick<UserModel, 'id' | 'username' | 'password' | 'firstname' | 'lastname'>
-  )> }
-);
-
 export type LoginQueryVariables = Exact<{
   username: Scalars['String'];
   password: Scalars['String'];
@@ -103,96 +78,27 @@ export type LoginQuery = (
   { __typename?: 'Query' }
   & { login: (
     { __typename?: 'LoginModel' }
-    & Pick<LoginModel, 'username' | 'password'>
+    & Pick<LoginModel, 'accessToken' | 'refreshToken'>
+  ) }
+);
+
+export type ValidateTokenQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ValidateTokenQuery = (
+  { __typename?: 'Query' }
+  & { validateToken: (
+    { __typename?: 'UserModel' }
+    & Pick<UserModel, 'id' | 'username' | 'password' | 'firstname' | 'lastname' | 'counter'>
   ) }
 );
 
 
-export const CreateUserDocument = gql`
-    mutation createUser($username: String!, $password: String!, $firstname: String!, $lastname: String!) {
-  createUser(
-    username: $username
-    password: $password
-    firstname: $firstname
-    lastname: $lastname
-  ) {
-    id
-    username
-    password
-    firstname
-    lastname
-  }
-}
-    `;
-export type CreateUserMutationFn = Apollo.MutationFunction<CreateUserMutation, CreateUserMutationVariables>;
-
-/**
- * __useCreateUserMutation__
- *
- * To run a mutation, you first call `useCreateUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateUserMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createUserMutation, { data, loading, error }] = useCreateUserMutation({
- *   variables: {
- *      username: // value for 'username'
- *      password: // value for 'password'
- *      firstname: // value for 'firstname'
- *      lastname: // value for 'lastname'
- *   },
- * });
- */
-export function useCreateUserMutation(baseOptions?: Apollo.MutationHookOptions<CreateUserMutation, CreateUserMutationVariables>) {
-        return Apollo.useMutation<CreateUserMutation, CreateUserMutationVariables>(CreateUserDocument, baseOptions);
-      }
-export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutation>;
-export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>;
-export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
-export const GetAllUsersDocument = gql`
-    query getAllUsers {
-  getAllUsers {
-    id
-    username
-    password
-    firstname
-    lastname
-  }
-}
-    `;
-
-/**
- * __useGetAllUsersQuery__
- *
- * To run a query within a React component, call `useGetAllUsersQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllUsersQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetAllUsersQuery(baseOptions?: Apollo.QueryHookOptions<GetAllUsersQuery, GetAllUsersQueryVariables>) {
-        return Apollo.useQuery<GetAllUsersQuery, GetAllUsersQueryVariables>(GetAllUsersDocument, baseOptions);
-      }
-export function useGetAllUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllUsersQuery, GetAllUsersQueryVariables>) {
-          return Apollo.useLazyQuery<GetAllUsersQuery, GetAllUsersQueryVariables>(GetAllUsersDocument, baseOptions);
-        }
-export type GetAllUsersQueryHookResult = ReturnType<typeof useGetAllUsersQuery>;
-export type GetAllUsersLazyQueryHookResult = ReturnType<typeof useGetAllUsersLazyQuery>;
-export type GetAllUsersQueryResult = Apollo.QueryResult<GetAllUsersQuery, GetAllUsersQueryVariables>;
 export const LoginDocument = gql`
     query login($username: String!, $password: String!) {
   login(username: $username, password: $password) {
-    username
-    password
+    accessToken
+    refreshToken
   }
 }
     `;
@@ -223,3 +129,40 @@ export function useLoginLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Logi
 export type LoginQueryHookResult = ReturnType<typeof useLoginQuery>;
 export type LoginLazyQueryHookResult = ReturnType<typeof useLoginLazyQuery>;
 export type LoginQueryResult = Apollo.QueryResult<LoginQuery, LoginQueryVariables>;
+export const ValidateTokenDocument = gql`
+    query validateToken {
+  validateToken {
+    id
+    username
+    password
+    firstname
+    lastname
+    counter
+  }
+}
+    `;
+
+/**
+ * __useValidateTokenQuery__
+ *
+ * To run a query within a React component, call `useValidateTokenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValidateTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useValidateTokenQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useValidateTokenQuery(baseOptions?: Apollo.QueryHookOptions<ValidateTokenQuery, ValidateTokenQueryVariables>) {
+        return Apollo.useQuery<ValidateTokenQuery, ValidateTokenQueryVariables>(ValidateTokenDocument, baseOptions);
+      }
+export function useValidateTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidateTokenQuery, ValidateTokenQueryVariables>) {
+          return Apollo.useLazyQuery<ValidateTokenQuery, ValidateTokenQueryVariables>(ValidateTokenDocument, baseOptions);
+        }
+export type ValidateTokenQueryHookResult = ReturnType<typeof useValidateTokenQuery>;
+export type ValidateTokenLazyQueryHookResult = ReturnType<typeof useValidateTokenLazyQuery>;
+export type ValidateTokenQueryResult = Apollo.QueryResult<ValidateTokenQuery, ValidateTokenQueryVariables>;

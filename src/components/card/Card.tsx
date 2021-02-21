@@ -1,13 +1,13 @@
 import { IonCard, IonCardContent, IonCol, IonGrid, IonIcon, IonInput, IonItem, IonLabel, IonList, IonRow, IonButtons, IonButton, IonToast } from '@ionic/react';
 import { personCircle } from "ionicons/icons";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMediaQuery } from 'react-responsive';
 import { useHistory } from 'react-router';
-import { LoginContext } from '../../App';
 
 import './Card.scss';
 import { useLoginLazyQuery } from '../../generated/graphql';
 import Loading from '../loading/loading';
+import { setToken } from '../../utils/storage.util';
 
 interface LoginCredentials {
     username: string,
@@ -26,24 +26,30 @@ const Card: React.FC = () => {
 
     const isMobile = useMediaQuery({ query: `(max-width: 699px)` });
     const history = useHistory();
-    const loginContext = useContext(LoginContext);
 
-    const [login] = useLoginLazyQuery({
+    const [login, { called } ] = useLoginLazyQuery({
         fetchPolicy: 'network-only',
         variables: { username: credentials.username, password: credentials.password },
         onCompleted: (response) => {
-            console.log("Se ha completado la query");
-            console.log(response);
-            setShowLoading(false);
-            if(response.login.username === "" || response.login.password === ""){
-                console.log("Credenciales incorrectos");
-                setMessage("Usuario o contraseña incorrecto.");
-                setShowToast(true);
+            if(showLoading) {
+                console.log("Se ha completado la query");
+                console.log(response);
+
+                setShowLoading(false);
+
+                if(response.login.accessToken === "Bad login" || response.login.refreshToken =="Bad login") {
+                    console.log("Credenciales incorrectos");
+                    setMessage("Usuario o contraseña incorrecto.");
+                    setShowToast(true);
+                }
+
+                else{
+                    setToken(response.login.accessToken)
+                    .then(() => {
+                        history.push("/page/dashboard");
+                    })
+                }
             }
-            else{
-                loginContext.updateDisabled(false);
-                history.push("/page/dashboard");
-            }   
         },
         onError: (error) => {
             setShowLoading(false);
@@ -61,6 +67,7 @@ const Card: React.FC = () => {
             console.log("El usuario y la contraseña no están vacíos.");
             setShowLoading(true);
             setCredentials({username: username, password: password});
+            // if(!called)
             login();
         }
         else {

@@ -15,14 +15,14 @@ export async function setToken(token: string): Promise<boolean> {
   return false;
 }
 
-export async function getToken(): Promise<string | boolean> {
+export async function getToken(): Promise<string> {
   const res = await Storage.get({ key: "token" });
 
   if(res.value){
-    return res.value
+    return res.value;
   }
 
-  return false
+  return "";
 }
 
 export async function clearToken() {

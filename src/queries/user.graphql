@@ -1,26 +1,17 @@
-mutation createUser($username: String!, $password: String!, $firstname: String!, $lastname: String!){
-    createUser(username: $username, password: $password, firstname: $firstname, lastname: $lastname){
-        id
-        username
-        password
-        firstname
-        lastname
-    }
-}
-
-query getAllUsers{
-    getAllUsers{
-        id
-        username
-        password
-        firstname
-        lastname
-    }
-}
-
 query login($username: String!, $password: String!){
     login(username: $username, password: $password){
+        accessToken
+        refreshToken
+    }
+}
+
+query validateToken {
+    validateToken {
+        id
         username
         password
+        firstname
+        lastname
+        counter
     }
 }
