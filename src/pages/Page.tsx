@@ -17,20 +17,20 @@ const Page: React.FC = () => {
 
   const loginContext = useContext(LoginContext);
 
-  const [validate] = useValidateTokenLazyQuery({
-    fetchPolicy: 'network-only',
-    onCompleted: (response) => {
-      console.log(response);
-    },
-    onError: (err) => {
-      console.log(err);
-    }
-  })
+  // const [validate] = useValidateTokenLazyQuery({
+  //   fetchPolicy: 'network-only',
+  //   onCompleted: (response) => {
+  //     console.log(response);
+  //   },
+  //   onError: (err) => {
+  //     console.log(err);
+  //   }
+  // })
 
-  useEffect(() => {
-    loginContext.updateDisabled(false);
-    validate();
-  }, [])
+  // useEffect(() => {
+  //   loginContext.updateDisabled(false);
+  //   validate();
+  // }, [])
 
   setTimeout(() => {
     setShowLoading(false);

@@ -61,50 +61,13 @@ export const LoginContext = React.createContext({
 
 const App: React.FC = () => {
 
-  // const [client, setClient] = useState<ApolloClient<NormalizedCacheObject>>();
-  // const [token, setToken] = useState<string>();
   const [disabled, setDisabled] = useState<boolean>(true);
+
+  console.log("Hola");
 
   const updateDisabled = (value: boolean) => {
     setDisabled(value);
   }
-
-  // const updateToken = async () => {
-  //   setToken(await getToken());
-  // }
-
-  // const httpLink = createHttpLink({
-  //   uri: 'http://localhost:3000/graphql/',
-  // });
-
-  // const authLink = setContext(async (_, { headers }) => {
-  //   // get the authentication token from local storage if it exists
-  //   // return the headers to the context so httpLink can read them
-  //     const newToken = await getToken();
-  //     if(newToken !== "") {
-  //       setToken(newToken);
-  //       return {
-  //           headers: {
-  //             ...headers,
-  //             authorization: token ? `Bearer ${token}` : "",
-  //           }
-  //       }
-  //     }
-  // });
-
-  // useEffect(() => {
-  //   console.log("Me ejecuto wey");
-  //     setClient(new ApolloClient({
-  //         link: authLink.concat(httpLink),
-  //         cache: new InMemoryCache(),
-  //     }));
-  // }, []);
-
-  // if(!client){
-  //   return (
-  //     <p>Rendering app...</p>
-  //   )
-  // }
 
   const httpLink = createHttpLink({
     uri: 'http://localhost:3000/graphql/',
@@ -126,7 +89,6 @@ const App: React.FC = () => {
     <ApolloProvider client={client}>
       <IonApp>
         <IonReactRouter>
-        {/* <Menu /> */}
         <IonSplitPane contentId="main" disabled={disabled}>
           <Menu />
             <LoginContext.Provider value={{updateDisabled}}>
@@ -150,16 +112,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-
-
-{/* <IonSplitPane contentId="main">
-          <Menu />
-          <IonRouterOutlet id="main">
-            <Route path="/" exact={true}>
-              <Redirect to="/page/Inbox" />
-            </Route>
-            <Route path="/page/:name" exact={true}>
-              <Page />
-            </Route>
-          </IonRouterOutlet>
-        </IonSplitPane> */}

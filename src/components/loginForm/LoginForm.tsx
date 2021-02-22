@@ -4,8 +4,8 @@ import React, { useEffect, useState } from "react";
 import { useMediaQuery } from 'react-responsive';
 import { useHistory } from 'react-router';
 
-import './Card.scss';
-import { useLoginLazyQuery } from '../../generated/graphql';
+import './LoginForm.scss';
+import { LoginModel, useLoginLazyQuery } from '../../generated/graphql';
 import Loading from '../loading/loading';
 import { setToken } from '../../utils/storage.util';
 
@@ -14,49 +14,18 @@ interface LoginCredentials {
     password: string
 }
 
-const Card: React.FC = () => {
+type Props = {
+    setCredentials: Function,
+    setMessage: Function
+}
+
+const Card: React.FC<Props> = ( props: Props ) => {
 
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [credentials, setCredentials] = useState<LoginCredentials>({username: "", password: ""});
-    const [message, setMessage] = useState<string>('');
     const [formStyle, setFormStyle] = useState<string>();
-    const [showToast, setShowToast] = useState<boolean>(false);
-    const [showLoading, setShowLoading] = useState<boolean>(false);
 
     const isMobile = useMediaQuery({ query: `(max-width: 699px)` });
-    const history = useHistory();
-
-    const [login, { called } ] = useLoginLazyQuery({
-        fetchPolicy: 'network-only',
-        variables: { username: credentials.username, password: credentials.password },
-        onCompleted: (response) => {
-            if(showLoading) {
-                console.log("Se ha completado la query");
-                console.log(response);
-
-                setShowLoading(false);
-
-                if(response.login.accessToken === "Bad login" || response.login.refreshToken =="Bad login") {
-                    console.log("Credenciales incorrectos");
-                    setMessage("Usuario o contraseña incorrecto.");
-                    setShowToast(true);
-                }
-
-                else{
-                    setToken(response.login.accessToken)
-                    .then(() => {
-                        history.push("/page/dashboard");
-                    })
-                }
-            }
-        },
-        onError: (error) => {
-            setShowLoading(false);
-            console.log("Ha ocurrido el siguiente error: ");
-            console.log(error);
-        }
-    })
 
     useEffect(() => {
         isMobile ? setFormStyle("inputFormMobile") : setFormStyle("inputFormWeb");
@@ -64,30 +33,15 @@ const Card: React.FC = () => {
 
     const handleSubmit = () => {
         if(username != '' && password != '' && username && password){
-            console.log("El usuario y la contraseña no están vacíos.");
-            setShowLoading(true);
-            setCredentials({username: username, password: password});
-            // if(!called)
-            login();
+            props.setCredentials({username: username, password: password});
         }
         else {
-            setMessage("El usuario y la contraseña no pueden estar vacíos.");
-            setShowToast(true);
+            props.setMessage("El usuario y la contraseña no pueden estar vacíos.");
         }
     }
 
     return(
         <IonCard className={formStyle}>
-            { showLoading ? <Loading /> : void 0 }
-            <IonToast
-                id="toast"
-                isOpen={showToast}
-                onDidDismiss={() => setShowToast(false)}
-                message={message}
-                duration={1000}
-                color="primary"
-                position="top"
-            />
             <IonCardContent>
                 <IonGrid>
                     <IonRow>
