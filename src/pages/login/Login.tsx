@@ -2,11 +2,12 @@ import { IonContent, IonPage, IonToast } from '@ionic/react';
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import LoginForm from '../../components/loginForm/LoginForm';
-import { useLoginMutation } from '../../generated/graphql';
+import { useLoginMutation, useLogoutMutation } from '../../generated/graphql';
 import background from '../../img/login_background.jpg';
 import { setToken } from '../../utils/storage.util';
 
 import './Login.scss';
+import { setAccessToken } from '../../utils/token.util';
 
 interface LoginCredentials {
 	username: string;
@@ -40,7 +41,9 @@ const Login: React.FC = () => {
 			if (res.login) {
 				console.log('Se ha completado la query');
 				console.log(res);
-				history.push('/page/dashboard');
+				// setToken(res.login.accessToken);
+				setAccessToken(res.login.accessToken);
+				// history.push('/page/dashboard');
 			}
 		},
 		onError: error => {
@@ -48,6 +51,15 @@ const Login: React.FC = () => {
 			console.log('Ha ocurrido el siguiente error: ');
 			console.log(error);
 			setMessage(error.message);
+		},
+	});
+
+	const [logout] = useLogoutMutation({
+		onCompleted: res => {
+			console.log('respuesta del logout ', res);
+		},
+		onError: err => {
+			console.log('El error es ', err);
 		},
 	});
 
@@ -66,6 +78,7 @@ const Login: React.FC = () => {
 					color="primary"
 					position="top"
 				/>
+				<button onClick={() => logout()}>Logout</button>
 				<LoginForm setCredentials={setCredentials} setMessage={setMessage} />
 			</IonContent>
 		</IonPage>
