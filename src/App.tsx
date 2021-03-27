@@ -23,11 +23,19 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 import Login from './pages/login/Login';
-import React, {useContext, useEffect, useState} from 'react';
-import { ApolloClient, ApolloProvider, createHttpLink, HttpLink, InMemoryCache, NormalizedCacheObject } from '@apollo/client';
-import { setContext } from "@apollo/client/link/context";
+import React, { useContext, useEffect, useState } from 'react';
+import {
+	ApolloClient,
+	ApolloProvider,
+	createHttpLink,
+	HttpLink,
+	InMemoryCache,
+	NormalizedCacheObject,
+} from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import { useConfigClient } from './utils/clientHook.util';
 import { getToken } from './utils/storage.util';
+import { Routes } from './routes/Routes';
 
 //TODO existe una vulneribilidad de un paquete, pero es de una dependencia llamada immer, en la version 8.0.1 se arregla,
 // pero la dependencia de react no esta actualizada aun, cuando lo este gg isi.
@@ -56,59 +64,48 @@ import { getToken } from './utils/storage.util';
 // })
 
 export const LoginContext = React.createContext({
-  updateDisabled: (value: boolean) => {},
+	updateDisabled: (value: boolean) => {},
 });
 
 const App: React.FC = () => {
+	const [disabled, setDisabled] = useState<boolean>(true);
 
-  const [disabled, setDisabled] = useState<boolean>(true);
+	console.log('Hola');
 
-  console.log("Hola");
+	const updateDisabled = (value: boolean) => {
+		setDisabled(value);
+	};
 
-  const updateDisabled = (value: boolean) => {
-    setDisabled(value);
-  }
+	const httpLink = createHttpLink({
+		uri: 'http://localhost:3000/graphql/',
+	});
 
-  const httpLink = createHttpLink({
-    uri: 'http://localhost:3000/graphql/',
-  });
+	const setAuthorizationLink = setContext(async (request, previousContext) => ({
+		headers: {
+			...previousContext.headers,
+			authorization: `Bearer ${await getToken()}`,
+		},
+	}));
 
-  const setAuthorizationLink = setContext(async (request, previousContext) => ({
-    headers: {
-      ...previousContext.headers,
-      authorization: `Bearer ${ await getToken() }`
-    }
-  }));
+	const client = new ApolloClient({
+		link: setAuthorizationLink.concat(httpLink),
+		cache: new InMemoryCache(),
+	});
 
-  const client = new ApolloClient({
-    link: setAuthorizationLink.concat(httpLink),
-    cache: new InMemoryCache()
-  });
-
-  return (
-    <ApolloProvider client={client}>
-      <IonApp>
-        <IonReactRouter>
-        <IonSplitPane contentId="main" disabled={disabled}>
-          <Menu />
-            <LoginContext.Provider value={{updateDisabled}}>
-              <IonRouterOutlet id="main">
-                <Route path="/" exact={true}>
-                  <Redirect to="/login" />
-                </Route>
-                <Route path="/login" exact={true}>
-                  <Login />
-                </Route>
-                <Route path="/page/:name" exact={true}>
-                  <Page />
-                </Route>
-              </IonRouterOutlet>
-            </LoginContext.Provider>
-        </IonSplitPane>
-        </IonReactRouter>
-      </IonApp>
-    </ApolloProvider>
-  );
+	return (
+		<ApolloProvider client={client}>
+			<IonApp>
+				<IonReactRouter>
+					<IonSplitPane contentId="main" disabled={disabled}>
+						<Menu />
+						<LoginContext.Provider value={{ updateDisabled }}>
+							<Routes />
+						</LoginContext.Provider>
+					</IonSplitPane>
+				</IonReactRouter>
+			</IonApp>
+		</ApolloProvider>
+	);
 };
 
 export default App;
