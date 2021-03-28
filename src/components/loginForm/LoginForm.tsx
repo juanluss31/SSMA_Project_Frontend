@@ -30,13 +30,6 @@ type Props = {
 const LoginForm: React.FC<Props> = (props: Props) => {
 	const [username, setUsername] = useState<string>('');
 	const [password, setPassword] = useState<string>('');
-	const [formStyle, setFormStyle] = useState<string>();
-
-	const isMobile = useMediaQuery({ query: `(max-width: 699px)` });
-
-	useEffect(() => {
-		isMobile ? setFormStyle('inputFormMobile') : setFormStyle('inputFormWeb');
-	}, []);
 
 	const handleSubmit = () => {
 		if (username !== '' && password !== '' && username && password) {
@@ -47,7 +40,7 @@ const LoginForm: React.FC<Props> = (props: Props) => {
 	};
 
 	return (
-		<IonCard className={formStyle}>
+		<IonCard className="inputFormWeb">
 			<IonCardContent>
 				<IonGrid>
 					<IonRow>

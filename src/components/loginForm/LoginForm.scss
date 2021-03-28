@@ -5,27 +5,26 @@
     top: 50%;
     left: 50%;
     // width: 50%;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
     // width: 80%;
 }
 
-.inputFormMobile {
-    text-align: center;
-    position: absolute;
-    transform: translateX(-50%) translateY(-50%);
-    top: 50%;
-    left: 50%;
-    width: 80%;
-    background-color: #FFFFFF;
-}
-
+// .inputFormMobile {
+//     text-align: center;
+//     position: absolute;
+//     transform: translateX(-50%) translateY(-50%);
+//     top: 50%;
+//     left: 50%;
+//     width: 80%;
+//     background-color: #FFFFFF;
+// }
 .label-stacked.sc-ion-label-md-h,
 .label-floating.sc-ion-label-md-h {
     font-size: x-large;
 }
 
 .submitButton {
-    color: #FFFFFF;
+    color: #ffffff;
     margin-top: 30px;
 }
 
@@ -33,5 +32,5 @@ ion-toast {
     --max-width: 50%;
     // --max-height: 4%;
     text-align: center;
-    color: #FFFFFF;
+    color: #ffffff;
 }

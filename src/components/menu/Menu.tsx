@@ -1,3 +1,5 @@
+import './Menu.css';
+
 import {
 	IonContent,
 	IonIcon,
@@ -9,8 +11,6 @@ import {
 	IonMenuToggle,
 	IonNote,
 } from '@ionic/react';
-
-import { useLocation } from 'react-router-dom';
 import {
 	archiveOutline,
 	archiveSharp,
@@ -25,7 +25,7 @@ import {
 	warningOutline,
 	warningSharp,
 } from 'ionicons/icons';
-import './Menu.css';
+import { useLocation } from 'react-router-dom';
 
 interface AppPage {
 	url: string;
@@ -36,7 +36,7 @@ interface AppPage {
 
 const appPages: AppPage[] = [
 	{
-		title: 'Inbox',
+		title: 'Vista general',
 		url: '/page/Inbox',
 		iosIcon: mailOutline,
 		mdIcon: mailSharp,
@@ -82,8 +82,8 @@ const Menu: React.FC = () => {
 		<IonMenu contentId="main" type="overlay">
 			<IonContent>
 				<IonList id="inbox-list">
-					<IonListHeader>Inbox</IonListHeader>
-					<IonNote>hi@ionicframework.com</IonNote>
+					<IonListHeader>Nombre de la empresa</IonListHeader>
+					<IonNote>Usuario que está logeado</IonNote>
 					{appPages.map((appPage, index) => {
 						return (
 							<IonMenuToggle key={index} autoHide={false}>
@@ -101,16 +101,6 @@ const Menu: React.FC = () => {
 						);
 					})}
 				</IonList>
-
-				{/* <IonList id="labels-list">
-            <IonListHeader>Labels</IonListHeader>
-            {labels.map((label, index) => (
-              <IonItem lines="none" key={index}>
-                <IonIcon slot="start" icon={bookmarkOutline} />
-                <IonLabel>{label}</IonLabel>
-              </IonItem>
-            ))}
-          </IonList> */}
 			</IonContent>
 		</IonMenu>
 	);

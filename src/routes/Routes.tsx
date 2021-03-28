@@ -1,21 +1,37 @@
-import { IonRouterOutlet } from '@ionic/react';
-import React from 'react';
+import { IonRouterOutlet, IonSplitPane } from '@ionic/react';
+import React, { useEffect, useState } from 'react';
 import { Redirect, Route } from 'react-router-dom';
+
+import Menu from '../components/menu/Menu';
+import Dashboard from '../pages/dashboard/Dashboard';
 import Login from '../pages/login/Login';
-import Page from '../pages/Page';
+import { spliPaneSubject } from '../utils/splitpane.util';
 
 export const Routes: React.FC = () => {
+	const [disabled, setDisabled] = useState<boolean>(true);
+
+	console.log('Estas escondido? ', disabled);
+
+	useEffect(() => {
+		spliPaneSubject.asObservable().subscribe((newState: boolean) => {
+			setDisabled(newState);
+		});
+	}, []);
+
 	return (
-		<IonRouterOutlet id="main">
-			<Route path="/" exact={true}>
-				<Redirect to="/login" />
-			</Route>
-			<Route path="/login" exact={true}>
-				<Login />
-			</Route>
-			<Route path="/page/:name" exact={true}>
-				<Page />
-			</Route>
-		</IonRouterOutlet>
+		<IonSplitPane contentId="main" disabled={disabled}>
+			<Menu />
+			<IonRouterOutlet id="main">
+				<Route path="/" exact={true}>
+					<Redirect to="/login" />
+				</Route>
+				<Route path="/login" exact={true}>
+					<Login />
+				</Route>
+				<Route path="/page/:name" exact={true}>
+					<Dashboard />
+				</Route>
+			</IonRouterOutlet>
+		</IonSplitPane>
 	);
 };
