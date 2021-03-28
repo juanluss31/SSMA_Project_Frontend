@@ -41,3 +41,13 @@ mutation logout {
 		username
 	}
 }
+
+query findAll {
+	findAll {
+		id
+		username
+		email
+		firstname
+		lastname
+	}
+}

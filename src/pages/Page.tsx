@@ -9,10 +9,9 @@ import {
 	IonTitle,
 	IonToolbar,
 } from '@ionic/react';
-import { useContext, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router';
 
-import { LoginContext } from '../App';
 import ExploreContainer from '../components/ExploreContainer';
 import Loading from '../components/loading/loading';
 
@@ -22,7 +21,7 @@ const Page: React.FC = () => {
 
 	const [showLoading, setShowLoading] = useState<boolean>(true);
 
-	const loginContext = useContext(LoginContext);
+	// const loginContext = useContext(LoginContext);
 
 	// const [validate] = useValidateTokenLazyQuery({
 	//   fetchPolicy: 'network-only',

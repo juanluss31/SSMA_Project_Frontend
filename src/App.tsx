@@ -14,72 +14,30 @@ import { ApolloClient, ApolloProvider, createHttpLink, from, InMemoryCache } fro
 import { setContext } from '@apollo/client/link/context';
 import { IonApp, IonSplitPane } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import React, { useContext, useEffect, useState } from 'react';
-
-import Menu from './components/Menu';
 import { TokenRefreshLink } from 'apollo-link-token-refresh';
 import jwtDecode from 'jwt-decode';
-import { getAccessToken } from './utils/token.util';
-import axios from 'axios';
+import React, { useState } from 'react';
+
 import { Routes } from './routes/Routes';
-
-/* Core CSS required for Ionic components to work properly */
-/* Basic CSS for apps built with Ionic */
-/* Optional CSS utils that can be commented out */
-/* Theme variables */
-//TODO existe una vulneribilidad de un paquete, pero es de una dependencia llamada immer, en la version 8.0.1 se arregla,
-// pero la dependencia de react no esta actualizada aun, cuando lo este gg isi.
-
-// const httpLink = createHttpLink({
-//   uri: 'http://localhost:3000/graphql/',
-// });
-
-// const authLink = setContext( async (_, { headers }) => {
-//   // get the authentication token from local storage if it exists
-//   const token = await localStorage.getItem('token');
-//   // return the headers to the context so httpLink can read them
-//   return {
-//     headers: {
-//       ...headers,
-//       authorization: token ? `Bearer ${token}` : "",
-//     }
-//   }
-// });
-
-// console.log(authLink);
-
-// const client = new ApolloClient({
-//   cache: new InMemoryCache(),
-//   link: authLink.concat(httpLink),
-// })
-
-export const LoginContext = React.createContext({
-	updateDisabled: (value: boolean) => {},
-});
+import { getAccessToken, setAccessToken } from './utils/token.util';
+import { RefreshTokenMutation } from './api/refresh.api';
+import { AuthProvider } from './context/auth.context';
 
 const App: React.FC = () => {
 	const [disabled, setDisabled] = useState<boolean>(true);
-
-	console.log('Hola');
 
 	const updateDisabled = (value: boolean) => {
 		setDisabled(value);
 	};
 
 	const httpLink = createHttpLink({
-		uri: 'http://localhost:3000/graphql/',
+		uri: 'http://localhost:3000/graphql',
 		credentials: 'include',
 	});
 
-	// const setAuthorizationLink = setContext(async (request, previousContext) => ({
-	// 	headers: {
-	// 		...previousContext.headers,
-	// 		authorization: `Bearer ${await getToken()}`,
-	// 	},
-	// }));
-
 	const authLink = setContext((_, { headers }) => {
 		const accessToken = getAccessToken();
+		console.log('Nuevo contexto');
 
 		if (!accessToken) return { headers };
 
@@ -94,33 +52,39 @@ const App: React.FC = () => {
 	const tokenRefreshLink = new TokenRefreshLink({
 		accessTokenField: 'accessToken',
 		isTokenValidOrUndefined: () => {
+			console.log('Se revisa el token');
 			const token = getAccessToken();
 
 			if (!token) {
+				console.log('Es undefined');
 				return true;
 			}
 
 			try {
 				const { exp } = jwtDecode(token) as { exp: number };
 				if (Date.now() >= exp * 1000) {
+					console.log('Ha expirado');
 					return false;
 				}
+				console.log('Es valido');
 				return true;
 			} catch (e) {
+				console.log('Error');
 				return false;
 			}
 		},
 		fetchAccessToken: async () => {
-			const response = await axios
-				.post('http://localhost:3000/auth/refresh-token', {}, { withCredentials: true })
-				.then(response => {
-					console.log('Se ha completado el axios: ', response);
-				});
+			const response = await RefreshTokenMutation();
 
 			return new Response(JSON.stringify(response));
 		},
-		// eslint-disable-next-line
-		handleFetch: () => {},
+		handleFetch: (accessToken: string) => {
+			setAccessToken(accessToken);
+		},
+		handleError: err => {
+			console.warn('El token de refresco es invalido, intente volver a iniciar sesión.');
+			console.error(err);
+		},
 	});
 
 	const client = new ApolloClient({
@@ -133,10 +97,9 @@ const App: React.FC = () => {
 			<IonApp>
 				<IonReactRouter>
 					<IonSplitPane contentId="main" disabled={disabled}>
-						<Menu />
-						<LoginContext.Provider value={{ updateDisabled }}>
+						<AuthProvider>
 							<Routes />
-						</LoginContext.Provider>
+						</AuthProvider>
 					</IonSplitPane>
 				</IonReactRouter>
 			</IonApp>

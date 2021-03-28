@@ -17,10 +17,10 @@ import { personCircle } from 'ionicons/icons';
 import React, { useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 
-interface LoginCredentials {
-	username: string;
-	password: string;
-}
+// interface LoginCredentials {
+// 	username: string;
+// 	password: string;
+// }
 
 type Props = {
 	setCredentials: Function;
@@ -39,7 +39,7 @@ const LoginForm: React.FC<Props> = (props: Props) => {
 	}, []);
 
 	const handleSubmit = () => {
-		if (username != '' && password != '' && username && password) {
+		if (username !== '' && password !== '' && username && password) {
 			props.setCredentials({ username: username, password: password });
 		} else {
 			props.setMessage('El usuario y la contraseña no pueden estar vacíos.');

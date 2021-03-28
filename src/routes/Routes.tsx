@@ -13,9 +13,6 @@ export const Routes: React.FC = () => {
 			<Route path="/login" exact={true}>
 				<Login />
 			</Route>
-			<Route path="/register" exact={true}>
-				<Login />
-			</Route>
 			<Route path="/page/:name" exact={true}>
 				<Page />
 			</Route>
