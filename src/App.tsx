@@ -17,8 +17,6 @@ import { IonReactRouter } from '@ionic/react-router';
 import React, { useContext, useEffect, useState } from 'react';
 
 import Menu from './components/Menu';
-import RefreshApp from './RefreshApp';
-import { getToken } from './utils/storage.util';
 import { TokenRefreshLink } from 'apollo-link-token-refresh';
 import jwtDecode from 'jwt-decode';
 import { getAccessToken } from './utils/token.util';
