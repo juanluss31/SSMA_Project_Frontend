@@ -1,15 +1,17 @@
-import './Menu.css';
+import './Menu.scss';
 
 import {
 	IonContent,
+	IonHeader,
 	IonIcon,
+	IonImg,
 	IonItem,
 	IonLabel,
 	IonList,
 	IonListHeader,
 	IonMenu,
 	IonMenuToggle,
-	IonNote,
+	IonToolbar,
 } from '@ionic/react';
 import {
 	archiveOutline,
@@ -25,7 +27,10 @@ import {
 	warningOutline,
 	warningSharp,
 } from 'ionicons/icons';
+import React from 'react';
 import { useLocation } from 'react-router-dom';
+
+import image from '../../img/team.png';
 
 interface AppPage {
 	url: string;
@@ -37,7 +42,7 @@ interface AppPage {
 const appPages: AppPage[] = [
 	{
 		title: 'Vista general',
-		url: '/page/Inbox',
+		url: '/page/Dashboard',
 		iosIcon: mailOutline,
 		mdIcon: mailSharp,
 	},
@@ -80,10 +85,17 @@ const Menu: React.FC = () => {
 
 	return (
 		<IonMenu contentId="main" type="overlay">
+			<IonHeader>
+				<IonToolbar style={{ textAlign: 'center' }}>
+					<IonImg className="menuImg" src={image} />
+					<p>Nombre de la empresa</p>
+				</IonToolbar>
+			</IonHeader>
 			<IonContent>
 				<IonList id="inbox-list">
-					<IonListHeader>Nombre de la empresa</IonListHeader>
-					<IonNote>Usuario que está logeado</IonNote>
+					{/* <IonListHeader>
+						
+					</IonListHeader> */}
 					{appPages.map((appPage, index) => {
 						return (
 							<IonMenuToggle key={index} autoHide={false}>

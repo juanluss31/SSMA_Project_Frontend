@@ -19,7 +19,7 @@ export const Routes: React.FC = () => {
 	}, []);
 
 	return (
-		<IonSplitPane contentId="main" disabled={disabled}>
+		<IonSplitPane contentId="main" disabled={disabled} when="md">
 			<Menu />
 			<IonRouterOutlet id="main">
 				<Route path="/" exact={true}>

@@ -1,11 +1,23 @@
 import './Dashboard.scss';
 
-import { IonContent, IonPage } from '@ionic/react';
+import {
+	IonAvatar,
+	IonButton,
+	IonChip,
+	IonContent,
+	IonHeader,
+	IonLabel,
+	IonMenuButton,
+	IonPage,
+	IonToolbar,
+} from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 import ExploreContainer from '../../components/ExploreContainer';
+import user from '../../img/defaultUser.png';
 import { spliPaneSubject } from '../../utils/splitpane.util';
+import axios from 'axios';
 
 const Dashboard: React.FC = () => {
 	const name =
@@ -24,8 +36,8 @@ const Dashboard: React.FC = () => {
 
 	const componentSwitch = () => {
 		switch (name) {
-			case 'Inbox':
-				return <ExploreContainer name="Página de Inbox" />;
+			case 'Dashboard':
+				return <ExploreContainer name="Página de Dashboard" />;
 			case 'Outbox':
 				return <ExploreContainer name="Página de Outbox" />;
 			case 'Favorites':
@@ -43,6 +55,17 @@ const Dashboard: React.FC = () => {
 
 	return (
 		<IonPage>
+			<IonHeader>
+				<IonToolbar>
+					<IonMenuButton slot="start"></IonMenuButton>
+					<IonChip slot="end" style={{ marginRight: '20px' }}>
+						<IonAvatar style={{ width: '30px', height: '30px' }}>
+							<img src={user} />
+						</IonAvatar>
+						<IonLabel>Nombre del usuario</IonLabel>
+					</IonChip>
+				</IonToolbar>
+			</IonHeader>
 			<IonContent fullscreen>{componentSwitch()}</IonContent>
 		</IonPage>
 	);

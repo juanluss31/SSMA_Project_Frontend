@@ -43,7 +43,7 @@ const Login: React.FC = () => {
 
 	return (
 		<IonPage style={{ backgroundImage: background }}>
-			<IonContent fullscreen>
+			<IonContent fullscreen className="loginContent">
 				<IonToast
 					id="toast"
 					isOpen={showToast}
