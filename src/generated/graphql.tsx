@@ -14,6 +14,33 @@ export type Scalars = {
   Float: number;
 };
 
+export type CompanyModel = {
+  __typename?: 'CompanyModel';
+  /** Identifier */
+  id: Scalars['Float'];
+  /** Company name */
+  name: Scalars['String'];
+  /** Company address */
+  address: Scalars['String'];
+  /** Company postal code */
+  postalCode: Scalars['String'];
+  /** Contact phone */
+  phone: Scalars['String'];
+  users: UserModel;
+};
+
+export type CounterModel = {
+  __typename?: 'CounterModel';
+  /** Identifier */
+  id: Scalars['Float'];
+  /** Username */
+  username: Scalars['String'];
+  /** Software Version */
+  currentVersion: Scalars['String'];
+  /** Associated company */
+  company: CompanyModel;
+};
+
 export type LoginResponse = {
   __typename?: 'LoginResponse';
   accessToken: Scalars['String'];
@@ -30,11 +57,15 @@ export type Mutation = {
   register: LoginResponse;
   login: LoginResponse;
   logout: LogoutResponse;
-  delete: UserModel;
+  delete: CompanyModel;
+  createCompany: CompanyModel;
+  updateCompany: CompanyModel;
+  createCounter: RegisterCounterResponse;
 };
 
 
 export type MutationRegisterArgs = {
+  companyId: Scalars['Float'];
   lastname: Scalars['String'];
   firstname: Scalars['String'];
   password: Scalars['String'];
@@ -50,23 +81,80 @@ export type MutationLoginArgs = {
 
 
 export type MutationDeleteArgs = {
-  userId: Scalars['String'];
+  id: Scalars['Float'];
+};
+
+
+export type MutationCreateCompanyArgs = {
+  phone: Scalars['String'];
+  postalCode: Scalars['String'];
+  address: Scalars['String'];
+  name: Scalars['String'];
+};
+
+
+export type MutationUpdateCompanyArgs = {
+  newPhone?: Maybe<Scalars['String']>;
+  newPostalCode?: Maybe<Scalars['String']>;
+  newAddress?: Maybe<Scalars['String']>;
+  newName?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
+
+export type MutationCreateCounterArgs = {
+  companyId: Scalars['Float'];
+  currentVersion: Scalars['String'];
+  password: Scalars['String'];
+  username: Scalars['String'];
 };
 
 export type Query = {
   __typename?: 'Query';
   findAll: Array<UserModel>;
   me?: Maybe<UserModel>;
+  findAllCompanies: Array<CompanyModel>;
+  findCompany: CompanyModel;
+  findCompanyByName: CompanyModel;
+  findAllCounters: Array<CounterModel>;
 };
+
+
+export type QueryFindCompanyArgs = {
+  id: Scalars['Float'];
+};
+
+
+export type QueryFindCompanyByNameArgs = {
+  name: Scalars['String'];
+};
+
+export type RegisterCounterResponse = {
+  __typename?: 'RegisterCounterResponse';
+  counter: CounterModel;
+};
+
+export enum Role {
+  BaseUser = 'BaseUser',
+  Admin = 'Admin'
+}
 
 export type UserModel = {
   __typename?: 'UserModel';
+  /** Identifier */
   id: Scalars['Float'];
+  /** Username */
   username: Scalars['String'];
+  /** Email */
   email: Scalars['String'];
+  /** Roles */
+  roles: Array<Role>;
+  /** Name */
   firstname: Scalars['String'];
+  /** Lastname */
   lastname: Scalars['String'];
-  tokenVersion: Scalars['Float'];
+  /** Associated company */
+  company: CompanyModel;
 };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -77,6 +165,10 @@ export type MeQuery = (
   & { me?: Maybe<(
     { __typename?: 'UserModel' }
     & Pick<UserModel, 'id' | 'username' | 'email' | 'firstname' | 'lastname'>
+    & { company: (
+      { __typename?: 'CompanyModel' }
+      & Pick<CompanyModel, 'id' | 'name' | 'address' | 'postalCode' | 'phone'>
+    ) }
   )> }
 );
 
@@ -86,6 +178,7 @@ export type RegisterMutationVariables = Exact<{
   password: Scalars['String'];
   firstname: Scalars['String'];
   lastname: Scalars['String'];
+  companyId: Scalars['Float'];
 }>;
 
 
@@ -97,6 +190,10 @@ export type RegisterMutation = (
     & { user: (
       { __typename?: 'UserModel' }
       & Pick<UserModel, 'id' | 'username' | 'email' | 'firstname' | 'lastname'>
+      & { company: (
+        { __typename?: 'CompanyModel' }
+        & Pick<CompanyModel, 'id' | 'name' | 'address' | 'postalCode' | 'phone'>
+      ) }
     ) }
   ) }
 );
@@ -115,6 +212,10 @@ export type LoginMutation = (
     & { user: (
       { __typename?: 'UserModel' }
       & Pick<UserModel, 'id' | 'username' | 'email' | 'firstname' | 'lastname'>
+      & { company: (
+        { __typename?: 'CompanyModel' }
+        & Pick<CompanyModel, 'id' | 'name' | 'address' | 'postalCode' | 'phone'>
+      ) }
     ) }
   ) }
 );
@@ -150,6 +251,13 @@ export const MeDocument = gql`
     email
     firstname
     lastname
+    company {
+      id
+      name
+      address
+      postalCode
+      phone
+    }
   }
 }
     `;
@@ -181,13 +289,14 @@ export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const RegisterDocument = gql`
-    mutation register($username: String!, $email: String!, $password: String!, $firstname: String!, $lastname: String!) {
+    mutation register($username: String!, $email: String!, $password: String!, $firstname: String!, $lastname: String!, $companyId: Float!) {
   register(
     username: $username
     email: $email
     password: $password
     firstname: $firstname
     lastname: $lastname
+    companyId: $companyId
   ) {
     user {
       id
@@ -195,6 +304,13 @@ export const RegisterDocument = gql`
       email
       firstname
       lastname
+      company {
+        id
+        name
+        address
+        postalCode
+        phone
+      }
     }
     accessToken
   }
@@ -220,6 +336,7 @@ export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, Regis
  *      password: // value for 'password'
  *      firstname: // value for 'firstname'
  *      lastname: // value for 'lastname'
+ *      companyId: // value for 'companyId'
  *   },
  * });
  */
@@ -239,6 +356,13 @@ export const LoginDocument = gql`
       email
       firstname
       lastname
+      company {
+        id
+        name
+        address
+        postalCode
+        phone
+      }
     }
     accessToken
   }

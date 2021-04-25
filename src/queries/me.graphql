@@ -5,5 +5,12 @@ query me {
 		email
 		firstname
 		lastname
+		company {
+			id
+			name
+			address
+			postalCode
+			phone
+		}
 	}
 }

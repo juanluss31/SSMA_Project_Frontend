@@ -1,12 +1,13 @@
+import './Login.scss';
+
 import { IonContent, IonPage, IonToast } from '@ionic/react';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Redirect } from 'react-router';
+
 import LoginForm from '../../components/loginForm/LoginForm';
+import { useAuth } from '../../context/auth.context';
 import { LoginMutationVariables } from '../../generated/graphql';
 import background from '../../img/login_background.jpg';
-
-import './Login.scss';
-import { useHistory } from 'react-router';
-import { useAuth } from '../../context/auth.context';
 
 const Login: React.FC = () => {
 	const [credentials, setCredentials] = useState<LoginMutationVariables>({
@@ -18,28 +19,22 @@ const Login: React.FC = () => {
 
 	const { isLogged, login } = useAuth();
 
-	const history = useHistory();
-
 	useEffect(() => {
-		console.log('Is logged ha cambiado: ', isLogged);
-		if (isLogged) {
-			history.push('/page/dashboard');
-		}
-	}, [isLogged]);
-
-	useEffect(() => {
-		console.log('Credentials changed: ', credentials);
 		if (credentials.username !== '' && credentials.password !== '') {
 			login(credentials);
 		}
 	}, [credentials]);
 
 	useEffect(() => {
-		console.log('Error message');
 		if (message !== '') {
 			setShowToast(true);
 		}
 	}, [message]);
+
+	if (isLogged) {
+		// history.push('/page/dashboard');
+		return <Redirect to="/page/Dashboard" />;
+	}
 
 	return (
 		<IonPage style={{ backgroundImage: background }}>

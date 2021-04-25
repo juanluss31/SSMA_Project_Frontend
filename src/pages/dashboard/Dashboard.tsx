@@ -2,7 +2,6 @@ import './Dashboard.scss';
 
 import {
 	IonAvatar,
-	IonButton,
 	IonChip,
 	IonContent,
 	IonHeader,
@@ -10,16 +9,20 @@ import {
 	IonMenuButton,
 	IonPage,
 	IonToolbar,
+	useIonPopover,
 } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
-import ExploreContainer from '../../components/ExploreContainer';
+import GraphicsContainer from '../../components/graphicsContainer/GraphicsContainer';
+import { useAuth } from '../../context/auth.context';
 import user from '../../img/defaultUser.png';
 import { spliPaneSubject } from '../../utils/splitpane.util';
-import axios from 'axios';
+import AvatarPopOver from '../../components/avatarPopOver/AvatarPopOver';
 
 const Dashboard: React.FC = () => {
+	const { currentUser, logout } = useAuth();
+
 	const name =
 		useParams<{ name: string }>().name.charAt(0).toUpperCase() +
 		useParams<{ name: string }>().name.slice(1);
@@ -29,6 +32,13 @@ const Dashboard: React.FC = () => {
 	}, []);
 
 	const [showLoading, setShowLoading] = useState<boolean>(true);
+	// const [showPopOver, hidePopOver] = useIonPopover(AvatarPopOver, {
+	// 	onHide: () => hidePopOver(),
+	// });
+	const [showPopover, setShowPopover] = useState<{ open: boolean; event: undefined }>({
+		open: false,
+		event: undefined,
+	});
 
 	setTimeout(() => {
 		setShowLoading(false);
@@ -37,19 +47,19 @@ const Dashboard: React.FC = () => {
 	const componentSwitch = () => {
 		switch (name) {
 			case 'Dashboard':
-				return <ExploreContainer name="Página de Dashboard" />;
-			case 'Outbox':
-				return <ExploreContainer name="Página de Outbox" />;
-			case 'Favorites':
-				return <ExploreContainer name="Página de Favorites" />;
-			case 'Archived':
-				return <ExploreContainer name="Página de Archived" />;
-			case 'Trash':
-				return <ExploreContainer name="Página de Trash" />;
-			case 'Spam':
-				return <ExploreContainer name="Página de Spam" />;
-			default:
-				return <ExploreContainer name="Página de Dashboard" />;
+				return <GraphicsContainer />;
+			// case 'Outbox':
+			// 	return <ExploreContainer name="Página de Outbox" />;
+			// case 'Favorites':
+			// 	return <ExploreContainer name="Página de Favorites" />;
+			// case 'Archived':
+			// 	return <ExploreContainer name="Página de Archived" />;
+			// case 'Trash':
+			// 	return <ExploreContainer name="Página de Trash" />;
+			// case 'Spam':
+			// 	return <ExploreContainer name="Página de Spam" />;
+			// default:
+			// 	return <ExploreContainer name="Página de Dashboard" />;
 		}
 	};
 
@@ -58,15 +68,30 @@ const Dashboard: React.FC = () => {
 			<IonHeader>
 				<IonToolbar>
 					<IonMenuButton slot="start"></IonMenuButton>
-					<IonChip slot="end" style={{ marginRight: '20px' }}>
+					<IonChip
+						slot="end"
+						style={{ marginRight: '20px' }}
+						onClick={(e: any) => {
+							// showPopOver({
+							// 	event: e.nativeEvent,
+							// });
+							setShowPopover({
+								open: true,
+								event: e,
+							});
+						}}
+					>
 						<IonAvatar style={{ width: '30px', height: '30px' }}>
 							<img src={user} />
 						</IonAvatar>
-						<IonLabel>Nombre del usuario</IonLabel>
+						<IonLabel>{currentUser?.me?.firstname + ' ' + currentUser?.me?.lastname}</IonLabel>
 					</IonChip>
 				</IonToolbar>
 			</IonHeader>
-			<IonContent fullscreen>{componentSwitch()}</IonContent>
+			<IonContent fullscreen className="contentBackground">
+				{componentSwitch()}
+			</IonContent>
+			<AvatarPopOver isOpen={showPopover} setIsOpen={setShowPopover} />
 		</IonPage>
 	);
 };

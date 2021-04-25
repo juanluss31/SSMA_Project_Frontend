@@ -16,6 +16,7 @@ import {
 import { personCircle } from 'ionicons/icons';
 import React, { useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
+import { useAuth } from '../../context/auth.context';
 
 // interface LoginCredentials {
 // 	username: string;

@@ -4,6 +4,7 @@ mutation register(
 	$password: String!
 	$firstname: String!
 	$lastname: String!
+	$companyId: Float!
 ) {
 	register(
 		username: $username
@@ -11,6 +12,7 @@ mutation register(
 		password: $password
 		firstname: $firstname
 		lastname: $lastname
+		companyId: $companyId
 	) {
 		user {
 			id
@@ -18,6 +20,13 @@ mutation register(
 			email
 			firstname
 			lastname
+			company {
+				id
+				name
+				address
+				postalCode
+				phone
+			}
 		}
 		accessToken
 	}
@@ -31,6 +40,13 @@ mutation login($username: String!, $password: String!) {
 			email
 			firstname
 			lastname
+			company {
+				id
+				name
+				address
+				postalCode
+				phone
+			}
 		}
 		accessToken
 	}

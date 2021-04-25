@@ -9,36 +9,33 @@ import {
 } from '../generated/graphql';
 import { setAccessToken } from '../utils/token.util';
 import { RefreshTokenMutation } from '../api/refresh.api';
+import { Redirect } from 'react-router';
+import { spliPaneSubject } from '../utils/splitpane.util';
 
-type AuthContext = {
+type AuthContextType = {
 	isLogged: boolean;
 	currentUser?: MeQuery;
 	login: (userData: LoginMutationVariables) => void;
 	logout: () => void;
 };
 
-const authDefaultContext: AuthContext = {
+const authDefaultContext: AuthContextType = {
 	isLogged: false,
 	currentUser: undefined,
 	login: () => null,
 	logout: () => null,
 };
 
-export const AuthContext = React.createContext<AuthContext>(authDefaultContext);
+export const AuthContext = React.createContext<AuthContextType>(authDefaultContext);
 
 export const AuthProvider: React.FC = ({ children }) => {
 	const [isLogged, setIsLogged] = useState<boolean>(false);
 
 	const [getCurrentUser, { data: dataCurrent }] = useMeLazyQuery({
 		onCompleted: data => {
-			console.log('Hola', data.me);
 			setIsLogged(data.me !== null);
 		},
 	});
-
-	useEffect(() => {
-		console.log('Nuevo valor de isLogged: ', isLogged);
-	}, [isLogged]);
 
 	const [loginMutation] = useLoginMutation({
 		onCompleted: data => {
@@ -54,7 +51,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 		onCompleted: () => {
 			setAccessToken('');
 			setIsLogged(false);
-			client.clearStore();
+			spliPaneSubject.next(true);
 		},
 		onError: (err: ApolloError) => {
 			// show toast
@@ -76,9 +73,19 @@ export const AuthProvider: React.FC = ({ children }) => {
 	useEffect(() => {
 		RefreshTokenMutation().then(result => {
 			if (result.ok) getCurrentUser();
-			else return null;
+			else {
+				setIsLogged(false);
+				return null;
+			}
 		});
 	}, [getCurrentUser]);
+
+	useEffect(() => {
+		if (!isLogged) {
+			client.stop();
+			client.clearStore();
+		}
+	}, [isLogged, client]);
 
 	return (
 		<AuthContext.Provider value={{ isLogged, currentUser: dataCurrent, login, logout }}>
@@ -87,6 +94,6 @@ export const AuthProvider: React.FC = ({ children }) => {
 	);
 };
 
-export const useAuth = (): AuthContext => {
+export const useAuth = (): AuthContextType => {
 	return React.useContext(AuthContext);
 };
