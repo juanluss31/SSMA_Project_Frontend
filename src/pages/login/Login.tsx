@@ -14,6 +14,7 @@ const Login: React.FC = () => {
 		username: '',
 		password: '',
 	});
+
 	const { isLogged, login } = useAuth();
 
 	useEffect(() => {

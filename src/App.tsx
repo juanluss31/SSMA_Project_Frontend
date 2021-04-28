@@ -22,7 +22,7 @@ import { RefreshTokenMutation } from './api/refresh.api';
 import { AuthProvider } from './context/auth/auth.context';
 import { Routes } from './routes/Routes';
 import { getAccessToken } from './utils/userData.util';
-import { ErrorProvider } from './context/error/error.context';
+import { UtilsProvider } from './context/error/utils.context';
 
 const App: React.FC = () => {
 	const httpLink = createHttpLink({
@@ -83,11 +83,11 @@ const App: React.FC = () => {
 		<ApolloProvider client={client}>
 			<IonApp>
 				<IonReactRouter>
-					<ErrorProvider>
+					<UtilsProvider>
 						<AuthProvider>
 							<Routes />
 						</AuthProvider>
-					</ErrorProvider>
+					</UtilsProvider>
 				</IonReactRouter>
 			</IonApp>
 		</ApolloProvider>
