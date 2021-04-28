@@ -1,11 +1,11 @@
 import './Login.scss';
 
-import { IonContent, IonPage, IonToast } from '@ionic/react';
+import { IonContent, IonPage } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router';
 
 import LoginForm from '../../components/loginForm/LoginForm';
-import { useAuth } from '../../context/auth.context';
+import { useAuth } from '../../context/auth/auth.context';
 import { LoginMutationVariables } from '../../generated/graphql';
 import background from '../../img/login_background.jpg';
 
@@ -14,22 +14,13 @@ const Login: React.FC = () => {
 		username: '',
 		password: '',
 	});
-	const [showToast, setShowToast] = useState<boolean>(false);
-	const [message, setMessage] = useState<string>('');
-
 	const { isLogged, login } = useAuth();
 
 	useEffect(() => {
 		if (credentials.username !== '' && credentials.password !== '') {
 			login(credentials);
 		}
-	}, [credentials]);
-
-	useEffect(() => {
-		if (message !== '') {
-			setShowToast(true);
-		}
-	}, [message]);
+	}, [credentials, login]);
 
 	if (isLogged) {
 		// history.push('/page/dashboard');
@@ -39,19 +30,7 @@ const Login: React.FC = () => {
 	return (
 		<IonPage style={{ backgroundImage: background }}>
 			<IonContent fullscreen className="loginContent">
-				<IonToast
-					id="toast"
-					isOpen={showToast}
-					onDidDismiss={() => {
-						setShowToast(false);
-						setMessage('');
-					}}
-					message={message}
-					duration={1000}
-					color="primary"
-					position="top"
-				/>
-				<LoginForm setCredentials={setCredentials} setMessage={setMessage} />
+				<LoginForm setCredentials={setCredentials} />
 			</IonContent>
 		</IonPage>
 	);

@@ -1,16 +1,17 @@
 import { ApolloError } from '@apollo/client';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+
+import { RefreshTokenMutation } from '../../api/refresh.api';
 import {
+	LoginMutationVariables,
 	MeQuery,
 	useLoginMutation,
 	useLogoutMutation,
 	useMeLazyQuery,
-	LoginMutationVariables,
-} from '../generated/graphql';
-import { setAccessToken } from '../utils/token.util';
-import { RefreshTokenMutation } from '../api/refresh.api';
-import { Redirect } from 'react-router';
-import { spliPaneSubject } from '../utils/splitpane.util';
+} from '../../generated/graphql';
+import { spliPaneSubject } from '../../utils/splitpane.util';
+import { setAccessToken, setUserRoles } from '../../utils/userData.util';
+import { useError } from '../error/error.context';
 
 type AuthContextType = {
 	isLogged: boolean;
@@ -31,6 +32,8 @@ export const AuthContext = React.createContext<AuthContextType>(authDefaultConte
 export const AuthProvider: React.FC = ({ children }) => {
 	const [isLogged, setIsLogged] = useState<boolean>(false);
 
+	const { showMessage } = useError();
+
 	const [getCurrentUser, { data: dataCurrent }] = useMeLazyQuery({
 		onCompleted: data => {
 			setIsLogged(data.me !== null);
@@ -40,16 +43,19 @@ export const AuthProvider: React.FC = ({ children }) => {
 	const [loginMutation] = useLoginMutation({
 		onCompleted: data => {
 			setAccessToken(data.login.accessToken);
+			setUserRoles(data.login.user.roles);
 			getCurrentUser();
 		},
 		onError: (err: ApolloError) => {
-			//show toast
+			console.log('Error en el login: ', err);
+			showMessage(err.message);
 		},
 	});
 
 	const [logoutMutation, { client }] = useLogoutMutation({
 		onCompleted: () => {
 			setAccessToken('');
+			setUserRoles(['']);
 			setIsLogged(false);
 			spliPaneSubject.next(true);
 		},

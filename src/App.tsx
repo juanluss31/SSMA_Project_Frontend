@@ -19,9 +19,10 @@ import jwtDecode from 'jwt-decode';
 import React from 'react';
 
 import { RefreshTokenMutation } from './api/refresh.api';
-import { AuthProvider } from './context/auth.context';
+import { AuthProvider } from './context/auth/auth.context';
 import { Routes } from './routes/Routes';
-import { getAccessToken, setAccessToken } from './utils/token.util';
+import { getAccessToken } from './utils/userData.util';
+import { ErrorProvider } from './context/error/error.context';
 
 const App: React.FC = () => {
 	const httpLink = createHttpLink({
@@ -66,9 +67,7 @@ const App: React.FC = () => {
 
 			return new Response(JSON.stringify(response));
 		},
-		handleFetch: (accessToken: string) => {
-			setAccessToken(accessToken);
-		},
+		handleFetch: () => {},
 		handleError: err => {
 			console.warn('El token de refresco es invalido, intente volver a iniciar sesión.');
 			console.error(err);
@@ -84,9 +83,11 @@ const App: React.FC = () => {
 		<ApolloProvider client={client}>
 			<IonApp>
 				<IonReactRouter>
-					<AuthProvider>
-						<Routes />
-					</AuthProvider>
+					<ErrorProvider>
+						<AuthProvider>
+							<Routes />
+						</AuthProvider>
+					</ErrorProvider>
 				</IonReactRouter>
 			</IonApp>
 		</ApolloProvider>

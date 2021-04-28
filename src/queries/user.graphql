@@ -47,6 +47,7 @@ mutation login($username: String!, $password: String!) {
 				postalCode
 				phone
 			}
+			roles
 		}
 		accessToken
 	}

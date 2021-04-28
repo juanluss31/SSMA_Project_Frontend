@@ -9,47 +9,40 @@ import {
 	IonMenuButton,
 	IonPage,
 	IonToolbar,
-	useIonPopover,
 } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
 
+import AvatarPopover from '../../components/avatarPopover/AvatarPopover';
 import GraphicsContainer from '../../components/graphicsContainer/GraphicsContainer';
-import { useAuth } from '../../context/auth.context';
+import { useAuth } from '../../context/auth/auth.context';
 import user from '../../img/defaultUser.png';
 import { spliPaneSubject } from '../../utils/splitpane.util';
-import AvatarPopOver from '../../components/avatarPopOver/AvatarPopOver';
+import { useLocation } from 'react-router-dom';
+import UserForm from '../../components/userForm/UserForm';
 
 const Dashboard: React.FC = () => {
-	const { currentUser, logout } = useAuth();
+	const { currentUser } = useAuth();
 
-	const name =
-		useParams<{ name: string }>().name.charAt(0).toUpperCase() +
-		useParams<{ name: string }>().name.slice(1);
+	const name = useLocation().pathname;
+
+	console.log(name);
 
 	useEffect(() => {
 		spliPaneSubject.next(false);
 	}, []);
 
-	const [showLoading, setShowLoading] = useState<boolean>(true);
-	// const [showPopOver, hidePopOver] = useIonPopover(AvatarPopOver, {
-	// 	onHide: () => hidePopOver(),
-	// });
 	const [showPopover, setShowPopover] = useState<{ open: boolean; event: undefined }>({
 		open: false,
 		event: undefined,
 	});
 
-	setTimeout(() => {
-		setShowLoading(false);
-	}, 2000);
-
 	const componentSwitch = () => {
 		switch (name) {
-			case 'Dashboard':
+			case '/page/Dashboard':
 				return <GraphicsContainer />;
-			// case 'Outbox':
-			// 	return <ExploreContainer name="Página de Outbox" />;
+			case '/page/admin/users':
+				return <UserForm />;
+			// return <ExploreContainer name="Página de Outbox" />;
 			// case 'Favorites':
 			// 	return <ExploreContainer name="Página de Favorites" />;
 			// case 'Archived':
@@ -70,11 +63,8 @@ const Dashboard: React.FC = () => {
 					<IonMenuButton slot="start"></IonMenuButton>
 					<IonChip
 						slot="end"
-						style={{ marginRight: '20px' }}
+						className="customChip"
 						onClick={(e: any) => {
-							// showPopOver({
-							// 	event: e.nativeEvent,
-							// });
 							setShowPopover({
 								open: true,
 								event: e,
@@ -82,7 +72,7 @@ const Dashboard: React.FC = () => {
 						}}
 					>
 						<IonAvatar style={{ width: '30px', height: '30px' }}>
-							<img src={user} />
+							<img src={user} alt="user avatar" />
 						</IonAvatar>
 						<IonLabel>{currentUser?.me?.firstname + ' ' + currentUser?.me?.lastname}</IonLabel>
 					</IonChip>
@@ -91,7 +81,7 @@ const Dashboard: React.FC = () => {
 			<IonContent fullscreen className="contentBackground">
 				{componentSwitch()}
 			</IonContent>
-			<AvatarPopOver isOpen={showPopover} setIsOpen={setShowPopover} />
+			<AvatarPopover isOpen={showPopover} setIsOpen={setShowPopover} />
 		</IonPage>
 	);
 };

@@ -12,65 +12,33 @@ import {
 	IonMenuToggle,
 	IonToolbar,
 } from '@ionic/react';
-import {
-	archiveOutline,
-	barChartOutline,
-	heartOutline,
-	paperPlaneOutline,
-	trashOutline,
-	warningOutline,
-} from 'ionicons/icons';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { useAuth } from '../../context/auth.context';
+import { useAuth } from '../../context/auth/auth.context';
 import image from '../../img/team.png';
-
-interface AppPage {
-	url: string;
-	icon: string;
-	title: string;
-}
-
-const appPages: AppPage[] = [
-	{
-		title: 'Vista general',
-		url: '/page/Dashboard',
-		icon: barChartOutline,
-	},
-	// {
-	// 	title: 'Outbox',
-	// 	url: '/page/Outbox',
-	// 	icon: paperPlaneOutline,
-	// },
-	// {
-	// 	title: 'Favorites',
-	// 	url: '/page/Favorites',
-	// 	icon: heartOutline,
-	// },
-	// {
-	// 	title: 'Archived',
-	// 	url: '/page/Archived',
-	// 	icon: archiveOutline,
-	// },
-	// {
-	// 	title: 'Trash',
-	// 	url: '/page/Trash',
-	// 	icon: trashOutline,
-	// },
-	// {
-	// 	title: 'Spam',
-	// 	url: '/page/Spam',
-	// 	icon: warningOutline,
-	// },
-];
-
-// const labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
+import { AppPage, appPages } from '../../routes/Pages';
+import { getUserRoles } from '../../utils/userData.util';
 
 const Menu: React.FC = () => {
 	const location = useLocation();
 
+	const roles = getUserRoles();
 	const { currentUser } = useAuth();
+
+	const [userPages, setUserPages] = useState<AppPage[]>();
+
+	useEffect(() => {
+		// Construir array de rutas
+
+		const pages: AppPage[] = [];
+
+		appPages.forEach(appPage => {
+			if (roles.includes(appPage.role)) pages.push(appPage);
+		});
+
+		setUserPages(pages);
+	}, [roles]);
 
 	return (
 		<IonMenu contentId="main" type="overlay">
@@ -82,11 +50,11 @@ const Menu: React.FC = () => {
 			</IonHeader>
 			<IonContent>
 				<IonList id="inbox-list">
-					{appPages.map((appPage, index) => {
+					{userPages?.map((appPage, index) => {
 						return (
 							<IonMenuToggle key={index} autoHide={false}>
 								<IonItem
-									className={location.pathname === appPage.url ? 'selected' : ''}
+									className={location.pathname === appPage.url ? 'selected' : 'notSelected'}
 									routerLink={appPage.url}
 									routerDirection="none"
 									lines="none"

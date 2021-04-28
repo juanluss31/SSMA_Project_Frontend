@@ -1,12 +1,18 @@
-import { RouteComponentProps, RouteProps, Route, Redirect, useHistory } from 'react-router-dom';
-import { useAuth } from '../../context/auth.context';
+import { Redirect, Route, RouteComponentProps, RouteProps } from 'react-router-dom';
+
+import { useAuth } from '../../context/auth/auth.context';
 
 interface ProtectedRouteProps extends RouteProps {
 	component: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any>;
+	role?: string;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ component: Component, ...rest }) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ component: Component, role, ...rest }) => {
 	const { isLogged } = useAuth();
+
+	if (!isLogged) {
+		return <Route {...rest} render={() => <Redirect to={{ pathname: '/' }} />}></Route>;
+	}
 
 	return (
 		<Route

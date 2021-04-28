@@ -14,29 +14,24 @@ import {
 	IonRow,
 } from '@ionic/react';
 import { personCircle } from 'ionicons/icons';
-import React, { useEffect, useState } from 'react';
-import { useMediaQuery } from 'react-responsive';
-import { useAuth } from '../../context/auth.context';
-
-// interface LoginCredentials {
-// 	username: string;
-// 	password: string;
-// }
+import React, { useState } from 'react';
+import { useError } from '../../context/error/error.context';
 
 type Props = {
 	setCredentials: Function;
-	setMessage: Function;
 };
 
 const LoginForm: React.FC<Props> = (props: Props) => {
 	const [username, setUsername] = useState<string>('');
 	const [password, setPassword] = useState<string>('');
 
+	const { showMessage } = useError();
+
 	const handleSubmit = () => {
 		if (username !== '' && password !== '' && username && password) {
 			props.setCredentials({ username: username, password: password });
 		} else {
-			props.setMessage('El usuario y la contraseña no pueden estar vacíos.');
+			showMessage('El usuario y la contraseña no pueden estar vacíos.');
 		}
 	};
 

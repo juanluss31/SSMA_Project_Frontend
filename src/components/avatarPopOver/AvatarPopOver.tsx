@@ -1,8 +1,8 @@
-import './AvatarPopOver.scss';
+import './AvatarPopover.scss';
 
 import { IonIcon, IonItem, IonList, IonPopover } from '@ionic/react';
 import { powerOutline } from 'ionicons/icons';
-import { useAuth } from '../../context/auth.context';
+import { useAuth } from '../../context/auth/auth.context';
 
 interface AvatarPopoverProps {
 	isOpen: { open: boolean; event: any };

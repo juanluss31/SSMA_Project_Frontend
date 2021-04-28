@@ -57,6 +57,7 @@ export type Mutation = {
   register: LoginResponse;
   login: LoginResponse;
   logout: LogoutResponse;
+  update: UserModel;
   delete: CompanyModel;
   createCompany: CompanyModel;
   updateCompany: CompanyModel;
@@ -76,6 +77,15 @@ export type MutationRegisterArgs = {
 
 export type MutationLoginArgs = {
   password: Scalars['String'];
+  username: Scalars['String'];
+};
+
+
+export type MutationUpdateArgs = {
+  newLastname?: Maybe<Scalars['String']>;
+  newFirstname?: Maybe<Scalars['String']>;
+  newEmail?: Maybe<Scalars['String']>;
+  newUsername?: Maybe<Scalars['String']>;
   username: Scalars['String'];
 };
 
@@ -211,7 +221,7 @@ export type LoginMutation = (
     & Pick<LoginResponse, 'accessToken'>
     & { user: (
       { __typename?: 'UserModel' }
-      & Pick<UserModel, 'id' | 'username' | 'email' | 'firstname' | 'lastname'>
+      & Pick<UserModel, 'id' | 'username' | 'email' | 'firstname' | 'lastname' | 'roles'>
       & { company: (
         { __typename?: 'CompanyModel' }
         & Pick<CompanyModel, 'id' | 'name' | 'address' | 'postalCode' | 'phone'>
@@ -363,6 +373,7 @@ export const LoginDocument = gql`
         postalCode
         phone
       }
+      roles
     }
     accessToken
   }

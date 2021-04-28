@@ -120,6 +120,10 @@ ion-item.selected {
     --color: var(--ion-color-primary) !important;
 }
 
+.notSelected {
+    --color: white;
+}
+
 // ion-item {
 //     --color: white;
 // }

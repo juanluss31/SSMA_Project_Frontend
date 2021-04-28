@@ -1,10 +1,11 @@
 import axios from 'axios';
-import { setAccessToken } from '../utils/token.util';
+import { setAccessToken, setUserRoles } from '../utils/userData.util';
 
 export interface RefreshTokenResponse {
 	ok: boolean;
 	message?: string;
 	accessToken?: string;
+	roles?: string[];
 }
 
 const formatError = (message: string): string =>
@@ -22,7 +23,7 @@ export const RefreshTokenMutation = async (): Promise<RefreshTokenResponse> => {
 			}
 		);
 
-		if (!data.accessToken || !data.ok) {
+		if (!data.accessToken || !data.ok || !data.roles) {
 			const errorMessage = formatError(data.message ?? '');
 			return {
 				ok: false,
@@ -32,6 +33,7 @@ export const RefreshTokenMutation = async (): Promise<RefreshTokenResponse> => {
 		}
 
 		setAccessToken(data.accessToken);
+		setUserRoles(data.roles);
 
 		return data;
 	} catch (err) {
@@ -42,6 +44,7 @@ export const RefreshTokenMutation = async (): Promise<RefreshTokenResponse> => {
 			ok: false,
 			message: errorMessage,
 			accessToken: '',
+			roles: [''],
 		};
 	}
 };
