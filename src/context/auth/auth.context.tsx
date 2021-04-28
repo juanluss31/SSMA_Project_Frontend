@@ -33,6 +33,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 	const [isLogged, setIsLogged] = useState<boolean>(false);
 
 	const { showErrorMessage } = useUtils();
+	const { dismissLoadingMessage } = useUtils();
 
 	const [getCurrentUser, { data: dataCurrent }] = useMeLazyQuery({
 		onCompleted: data => {
@@ -47,7 +48,6 @@ export const AuthProvider: React.FC = ({ children }) => {
 			getCurrentUser();
 		},
 		onError: (err: ApolloError) => {
-			console.log('Error en el login: ', err);
 			showErrorMessage(err.message);
 		},
 	});
@@ -60,20 +60,24 @@ export const AuthProvider: React.FC = ({ children }) => {
 			spliPaneSubject.next(true);
 		},
 		onError: (err: ApolloError) => {
-			// show toast
+			showErrorMessage(err.message);
 		},
 	});
 
 	const login = useCallback(
 		(userData: LoginMutationVariables) => {
 			const { username, password } = userData;
-			loginMutation({ variables: { username, password } });
+			loginMutation({ variables: { username, password } }).then(() => {
+				dismissLoadingMessage();
+			});
 		},
 		[loginMutation]
 	);
 
 	const logout = useCallback(() => {
-		logoutMutation();
+		logoutMutation().then(() => {
+			dismissLoadingMessage();
+		});
 	}, [logoutMutation]);
 
 	useEffect(() => {

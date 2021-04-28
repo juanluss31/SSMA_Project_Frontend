@@ -3,6 +3,7 @@ import './AvatarPopover.scss';
 import { IonIcon, IonItem, IonList, IonPopover } from '@ionic/react';
 import { powerOutline } from 'ionicons/icons';
 import { useAuth } from '../../context/auth/auth.context';
+import { useUtils } from '../../context/error/utils.context';
 
 interface AvatarPopoverProps {
 	isOpen: { open: boolean; event: any };
@@ -11,8 +12,10 @@ interface AvatarPopoverProps {
 
 const AvatarPopOver: React.FC<AvatarPopoverProps> = ({ isOpen, setIsOpen }) => {
 	const { logout } = useAuth();
+	const { showLoadingMessage } = useUtils();
 
 	const handleClick = () => {
+		showLoadingMessage('Cerrando sesión...');
 		logout();
 	};
 

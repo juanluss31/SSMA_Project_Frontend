@@ -8,6 +8,7 @@ import LoginForm from '../../components/loginForm/LoginForm';
 import { useAuth } from '../../context/auth/auth.context';
 import { LoginMutationVariables } from '../../generated/graphql';
 import background from '../../img/login_background.jpg';
+import { useUtils } from '../../context/error/utils.context';
 
 const Login: React.FC = () => {
 	const [credentials, setCredentials] = useState<LoginMutationVariables>({
@@ -16,9 +17,11 @@ const Login: React.FC = () => {
 	});
 
 	const { isLogged, login } = useAuth();
+	const { showLoadingMessage } = useUtils();
 
 	useEffect(() => {
 		if (credentials.username !== '' && credentials.password !== '') {
+			showLoadingMessage('Iniciando sesión...');
 			login(credentials);
 		}
 	}, [credentials, login]);

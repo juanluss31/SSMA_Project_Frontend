@@ -29,7 +29,7 @@ export const UtilsProvider: React.FC = ({ children }) => {
 	};
 
 	const showLoadingMessage = (newMessage: string) => {
-		setLoadingMessage(newMessage);
+		if (newMessage !== '') setLoadingMessage(newMessage);
 		setShowLoading(true);
 	};
 
