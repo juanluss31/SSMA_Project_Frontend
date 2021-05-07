@@ -10,7 +10,7 @@ interface AvatarPopoverProps {
 	setIsOpen: Function;
 }
 
-const AvatarPopOver: React.FC<AvatarPopoverProps> = ({ isOpen, setIsOpen }) => {
+const AvatarPopover: React.FC<AvatarPopoverProps> = ({ isOpen, setIsOpen }) => {
 	const { logout } = useAuth();
 	const { showLoadingMessage } = useUtils();
 
@@ -36,4 +36,4 @@ const AvatarPopOver: React.FC<AvatarPopoverProps> = ({ isOpen, setIsOpen }) => {
 	);
 };
 
-export default AvatarPopOver;
+export default AvatarPopover;
