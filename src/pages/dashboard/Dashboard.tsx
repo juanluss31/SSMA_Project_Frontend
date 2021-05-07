@@ -18,7 +18,7 @@ import { useAuth } from '../../context/auth/auth.context';
 import user from '../../img/defaultUser.png';
 import { spliPaneSubject } from '../../utils/splitpane.util';
 import { useLocation } from 'react-router-dom';
-import UserForm from '../../components/userForm/UserForm';
+import UserTable from '../../components/userTable/UserTable';
 
 const Dashboard: React.FC = () => {
 	const { currentUser } = useAuth();
@@ -41,7 +41,8 @@ const Dashboard: React.FC = () => {
 			case '/page/Dashboard':
 				return <GraphicsContainer />;
 			case '/page/admin/users':
-				return <UserForm />;
+				// return <UserForm />;
+				return <UserTable />;
 			// return <ExploreContainer name="Página de Outbox" />;
 			// case 'Favorites':
 			// 	return <ExploreContainer name="Página de Favorites" />;

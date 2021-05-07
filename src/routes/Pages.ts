@@ -15,7 +15,7 @@ export const appPages: AppPage[] = [
 		role: 'BaseUser',
 	},
 	{
-		title: 'Administración de usuarios',
+		title: 'Administrar usuarios',
 		url: '/page/admin/users',
 		icon: peopleOutline,
 		role: 'Admin',

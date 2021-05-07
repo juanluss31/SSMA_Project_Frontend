@@ -32,8 +32,7 @@ export const AuthContext = React.createContext<AuthContextType>(authDefaultConte
 export const AuthProvider: React.FC = ({ children }) => {
 	const [isLogged, setIsLogged] = useState<boolean>(false);
 
-	const { showErrorMessage } = useUtils();
-	const { dismissLoadingMessage } = useUtils();
+	const { showErrorMessage, dismissLoadingMessage } = useUtils();
 
 	const [getCurrentUser, { data: dataCurrent }] = useMeLazyQuery({
 		onCompleted: data => {
@@ -71,14 +70,14 @@ export const AuthProvider: React.FC = ({ children }) => {
 				dismissLoadingMessage();
 			});
 		},
-		[loginMutation]
+		[dismissLoadingMessage, loginMutation]
 	);
 
 	const logout = useCallback(() => {
 		logoutMutation().then(() => {
 			dismissLoadingMessage();
 		});
-	}, [logoutMutation]);
+	}, [dismissLoadingMessage, logoutMutation]);
 
 	useEffect(() => {
 		RefreshTokenMutation().then(result => {

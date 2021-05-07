@@ -68,3 +68,21 @@ query findAll {
 		lastname
 	}
 }
+
+query findCompanyUsers($companyId: Float!) {
+	findCompanyUsers(companyId: $companyId) {
+		id
+		username
+		email
+		firstname
+		lastname
+		company {
+			id
+			name
+			address
+			postalCode
+			phone
+		}
+		roles
+	}
+}

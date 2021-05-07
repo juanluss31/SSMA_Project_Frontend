@@ -1,4 +1,4 @@
-import './UserForm.scss';
+import './EditUserForm.scss';
 
 import {
 	IonButton,
@@ -12,7 +12,12 @@ import {
 } from '@ionic/react';
 import React from 'react';
 
-const UserForm: React.FC = () => {
+interface EditUserFormProps {
+	showModal: boolean;
+	dismissModal: Function;
+}
+
+const EditUserForm: React.FC<EditUserFormProps> = ({ showModal, dismissModal }) => {
 	return (
 		<div style={{ height: '100%', width: '100%' }}>
 			<IonCard style={{ margin: 'auto', marginTop: '5%', width: 'fit-content' }}>
@@ -69,4 +74,4 @@ const UserForm: React.FC = () => {
 	);
 };
 
-export default UserForm;
+export default EditUserForm;

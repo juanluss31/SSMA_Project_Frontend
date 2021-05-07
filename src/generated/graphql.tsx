@@ -26,7 +26,6 @@ export type CompanyModel = {
   postalCode: Scalars['String'];
   /** Contact phone */
   phone: Scalars['String'];
-  users: UserModel;
 };
 
 export type CounterModel = {
@@ -55,17 +54,29 @@ export type LogoutResponse = {
 export type Mutation = {
   __typename?: 'Mutation';
   register: LoginResponse;
+  registerAdmin: LoginResponse;
   login: LoginResponse;
   logout: LogoutResponse;
   update: UserModel;
-  delete: CompanyModel;
+  delete: UserModel;
   createCompany: CompanyModel;
   updateCompany: CompanyModel;
+  deleteCompany: CompanyModel;
   createCounter: RegisterCounterResponse;
 };
 
 
 export type MutationRegisterArgs = {
+  companyId: Scalars['Float'];
+  lastname: Scalars['String'];
+  firstname: Scalars['String'];
+  password: Scalars['String'];
+  email: Scalars['String'];
+  username: Scalars['String'];
+};
+
+
+export type MutationRegisterAdminArgs = {
   companyId: Scalars['Float'];
   lastname: Scalars['String'];
   firstname: Scalars['String'];
@@ -91,7 +102,7 @@ export type MutationUpdateArgs = {
 
 
 export type MutationDeleteArgs = {
-  id: Scalars['Float'];
+  userId: Scalars['String'];
 };
 
 
@@ -112,6 +123,11 @@ export type MutationUpdateCompanyArgs = {
 };
 
 
+export type MutationDeleteCompanyArgs = {
+  id: Scalars['Float'];
+};
+
+
 export type MutationCreateCounterArgs = {
   companyId: Scalars['Float'];
   currentVersion: Scalars['String'];
@@ -122,11 +138,17 @@ export type MutationCreateCounterArgs = {
 export type Query = {
   __typename?: 'Query';
   findAll: Array<UserModel>;
+  findCompanyUsers: Array<UserModel>;
   me?: Maybe<UserModel>;
   findAllCompanies: Array<CompanyModel>;
   findCompany: CompanyModel;
   findCompanyByName: CompanyModel;
   findAllCounters: Array<CounterModel>;
+};
+
+
+export type QueryFindCompanyUsersArgs = {
+  companyId: Scalars['Float'];
 };
 
 
@@ -249,6 +271,23 @@ export type FindAllQuery = (
   & { findAll: Array<(
     { __typename?: 'UserModel' }
     & Pick<UserModel, 'id' | 'username' | 'email' | 'firstname' | 'lastname'>
+  )> }
+);
+
+export type FindCompanyUsersQueryVariables = Exact<{
+  companyId: Scalars['Float'];
+}>;
+
+
+export type FindCompanyUsersQuery = (
+  { __typename?: 'Query' }
+  & { findCompanyUsers: Array<(
+    { __typename?: 'UserModel' }
+    & Pick<UserModel, 'id' | 'username' | 'email' | 'firstname' | 'lastname' | 'roles'>
+    & { company: (
+      { __typename?: 'CompanyModel' }
+      & Pick<CompanyModel, 'id' | 'name' | 'address' | 'postalCode' | 'phone'>
+    ) }
   )> }
 );
 
@@ -476,3 +515,50 @@ export function useFindAllLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Fi
 export type FindAllQueryHookResult = ReturnType<typeof useFindAllQuery>;
 export type FindAllLazyQueryHookResult = ReturnType<typeof useFindAllLazyQuery>;
 export type FindAllQueryResult = Apollo.QueryResult<FindAllQuery, FindAllQueryVariables>;
+export const FindCompanyUsersDocument = gql`
+    query findCompanyUsers($companyId: Float!) {
+  findCompanyUsers(companyId: $companyId) {
+    id
+    username
+    email
+    firstname
+    lastname
+    company {
+      id
+      name
+      address
+      postalCode
+      phone
+    }
+    roles
+  }
+}
+    `;
+
+/**
+ * __useFindCompanyUsersQuery__
+ *
+ * To run a query within a React component, call `useFindCompanyUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindCompanyUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindCompanyUsersQuery({
+ *   variables: {
+ *      companyId: // value for 'companyId'
+ *   },
+ * });
+ */
+export function useFindCompanyUsersQuery(baseOptions: Apollo.QueryHookOptions<FindCompanyUsersQuery, FindCompanyUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindCompanyUsersQuery, FindCompanyUsersQueryVariables>(FindCompanyUsersDocument, options);
+      }
+export function useFindCompanyUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindCompanyUsersQuery, FindCompanyUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindCompanyUsersQuery, FindCompanyUsersQueryVariables>(FindCompanyUsersDocument, options);
+        }
+export type FindCompanyUsersQueryHookResult = ReturnType<typeof useFindCompanyUsersQuery>;
+export type FindCompanyUsersLazyQueryHookResult = ReturnType<typeof useFindCompanyUsersLazyQuery>;
+export type FindCompanyUsersQueryResult = Apollo.QueryResult<FindCompanyUsersQuery, FindCompanyUsersQueryVariables>;

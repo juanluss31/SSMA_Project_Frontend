@@ -23,10 +23,12 @@ import { AuthProvider } from './context/auth/auth.context';
 import { Routes } from './routes/Routes';
 import { getAccessToken } from './utils/userData.util';
 import { UtilsProvider } from './context/error/utils.context';
+import { DataProvider } from './context/data/data.context';
 
 const App: React.FC = () => {
 	const httpLink = createHttpLink({
-		uri: 'http://localhost:3000/graphql',
+		// uri: 'http://localhost:3000/graphql',
+		uri: 'https://tfg-people-counter.herokuapp.com/graphql',
 		credentials: 'include',
 	});
 
@@ -85,7 +87,9 @@ const App: React.FC = () => {
 				<IonReactRouter>
 					<UtilsProvider>
 						<AuthProvider>
-							<Routes />
+							<DataProvider>
+								<Routes />
+							</DataProvider>
 						</AuthProvider>
 					</UtilsProvider>
 				</IonReactRouter>
