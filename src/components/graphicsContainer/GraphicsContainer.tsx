@@ -18,7 +18,7 @@ const GraphicsContainer: React.FC = () => {
 
 	useEffect(() => {
 		setTimeout(() => {
-			const newNumber = Math.floor(Math.random() * (10 - 0 + 1) + 0);
+			const newNumber = Math.floor(Math.random() * (200 - 0 + 1) + 0);
 			setNumber(newNumber);
 		}, 5000);
 	}, [number]);

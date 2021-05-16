@@ -27,8 +27,9 @@ import { DataProvider } from './context/data/data.context';
 
 const App: React.FC = () => {
 	const httpLink = createHttpLink({
-		// uri: 'http://localhost:3000/graphql',
-		uri: 'https://tfg-people-counter.herokuapp.com/graphql',
+		uri: 'http://localhost:3000/graphql',
+		// uri: 'http://192.168.1.57:3000/graphql',
+		// uri: 'https://tfg-people-counter.herokuapp.com/graphql',
 		credentials: 'include',
 	});
 

@@ -25,13 +25,13 @@ const LoginForm: React.FC<Props> = (props: Props) => {
 	const [username, setUsername] = useState<string>('');
 	const [password, setPassword] = useState<string>('');
 
-	const { showErrorMessage } = useUtils();
+	const { showToastMessage } = useUtils();
 
 	const handleSubmit = () => {
 		if (username !== '' && password !== '' && username && password) {
 			props.setCredentials({ username: username, password: password });
 		} else {
-			showErrorMessage('El usuario y la contraseña no pueden estar vacíos.');
+			showToastMessage('El usuario y la contraseña no pueden estar vacíos.', 'danger');
 		}
 	};
 

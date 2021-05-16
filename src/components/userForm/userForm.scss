@@ -1,0 +1,32 @@
+.buttonCenter {
+    // margin-top: 20px;
+    width: 45%;
+    margin-left: 3%;
+    // float: left;
+    // margin: auto;
+    // height: 100%;
+}
+
+.modalForm {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media only screen and (min-width: 992px) {
+    .editModal {
+        --width: 25%;
+    }
+}
+
+@media only screen and (min-width: 551px) and (max-width: 1024px) {
+    .editModal {
+        --width: 40%;
+    }
+}
+
+@media only screen and (max-width: 550px) {
+    .editModal {
+        --width: 100%;
+    }
+}

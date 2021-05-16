@@ -12,8 +12,9 @@ const formatError = (message: string): string =>
 	`Failed refresh token operation: ${message ? `${message}.` : ''} Try to relogin`;
 
 export const RefreshTokenMutation = async (): Promise<RefreshTokenResponse> => {
-	// const endpoint = `http://localhost:3000/auth/refresh-token`;
-	const endpoint = `https://tfg-people-counter.herokuapp.com/auth/refresh-token`;
+	const endpoint = 'http://localhost:3000/auth/refresh-token';
+	// const endpoint = `http://192.168.1.57:3000/auth/refresh-token`;
+	// const endpoint = `https://tfg-people-counter.herokuapp.com/auth/refresh-token`;
 
 	try {
 		const { data } = await axios.post<RefreshTokenResponse>(
@@ -21,7 +22,6 @@ export const RefreshTokenMutation = async (): Promise<RefreshTokenResponse> => {
 			{},
 			{
 				withCredentials: true,
-				headers: { 'Access-Control-Allow-Origin': '*' },
 			}
 		);
 

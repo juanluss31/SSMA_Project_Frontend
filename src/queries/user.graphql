@@ -4,7 +4,7 @@ mutation register(
 	$password: String!
 	$firstname: String!
 	$lastname: String!
-	$companyId: Float!
+	$companyName: String!
 ) {
 	register(
 		username: $username
@@ -12,23 +12,10 @@ mutation register(
 		password: $password
 		firstname: $firstname
 		lastname: $lastname
-		companyId: $companyId
+		companyName: $companyName
 	) {
-		user {
-			id
-			username
-			email
-			firstname
-			lastname
-			company {
-				id
-				name
-				address
-				postalCode
-				phone
-			}
-		}
-		accessToken
+		id
+		username
 	}
 }
 
@@ -84,5 +71,34 @@ query findCompanyUsers($companyId: Float!) {
 			phone
 		}
 		roles
+	}
+}
+
+mutation updateUser(
+	$username: String!
+	$newUsername: String
+	$newEmail: String
+	$newFirstname: String
+	$newLastname: String
+) {
+	update(
+		username: $username
+		newUsername: $newUsername
+		newEmail: $newEmail
+		newFirstname: $newFirstname
+		newLastname: $newLastname
+	) {
+		id
+		username
+		email
+		firstname
+		lastname
+	}
+}
+
+mutation deleteUser($userId: Float!) {
+	delete(userId: $userId) {
+		id
+		username
 	}
 }

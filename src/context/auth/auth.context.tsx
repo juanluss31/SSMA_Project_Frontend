@@ -12,10 +12,13 @@ import {
 import { spliPaneSubject } from '../../utils/splitpane.util';
 import { setAccessToken, setUserRoles } from '../../utils/userData.util';
 import { useUtils } from '../error/utils.context';
+import { useRegisterMutation, RegisterMutationVariables } from '../../generated/graphql';
+import { useData } from '../data/data.context';
 
 type AuthContextType = {
 	isLogged: boolean;
 	currentUser?: MeQuery;
+	register: (userData: RegisterMutationVariables) => void;
 	login: (userData: LoginMutationVariables) => void;
 	logout: () => void;
 };
@@ -23,6 +26,7 @@ type AuthContextType = {
 const authDefaultContext: AuthContextType = {
 	isLogged: false,
 	currentUser: undefined,
+	register: () => null,
 	login: () => null,
 	logout: () => null,
 };
@@ -31,8 +35,9 @@ export const AuthContext = React.createContext<AuthContextType>(authDefaultConte
 
 export const AuthProvider: React.FC = ({ children }) => {
 	const [isLogged, setIsLogged] = useState<boolean>(false);
+	const { findUsers } = useData();
 
-	const { showErrorMessage, dismissLoadingMessage } = useUtils();
+	const { showToastMessage, dismissLoadingMessage } = useUtils();
 
 	const [getCurrentUser, { data: dataCurrent }] = useMeLazyQuery({
 		onCompleted: data => {
@@ -40,14 +45,25 @@ export const AuthProvider: React.FC = ({ children }) => {
 		},
 	});
 
+	const [registerMutation] = useRegisterMutation({
+		onCompleted: data => {
+			showToastMessage(`Se ha registrado el usuario ${data.register.username} `, 'primary');
+			findUsers({ companyId: dataCurrent?.me?.company.id! });
+		},
+		onError: (err: ApolloError) => {
+			showToastMessage(err.message, 'danger');
+		},
+	});
+
 	const [loginMutation] = useLoginMutation({
 		onCompleted: data => {
+			console.log(data);
 			setAccessToken(data.login.accessToken);
 			setUserRoles(data.login.user.roles);
 			getCurrentUser();
 		},
 		onError: (err: ApolloError) => {
-			showErrorMessage(err.message);
+			showToastMessage(err.message, 'danger');
 		},
 	});
 
@@ -59,9 +75,19 @@ export const AuthProvider: React.FC = ({ children }) => {
 			spliPaneSubject.next(true);
 		},
 		onError: (err: ApolloError) => {
-			showErrorMessage(err.message);
+			showToastMessage(err.message, 'danger');
 		},
 	});
+
+	const register = useCallback(
+		(userData: RegisterMutationVariables) => {
+			const { username, email, password, firstname, lastname, companyName } = userData;
+			registerMutation({
+				variables: { username, email, password, firstname, lastname, companyName },
+			});
+		},
+		[registerMutation]
+	);
 
 	const login = useCallback(
 		(userData: LoginMutationVariables) => {
@@ -97,7 +123,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 	}, [isLogged, client]);
 
 	return (
-		<AuthContext.Provider value={{ isLogged, currentUser: dataCurrent, login, logout }}>
+		<AuthContext.Provider value={{ isLogged, currentUser: dataCurrent, register, login, logout }}>
 			{children}
 		</AuthContext.Provider>
 	);

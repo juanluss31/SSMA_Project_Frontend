@@ -22,9 +22,10 @@ const Login: React.FC = () => {
 	useEffect(() => {
 		if (credentials.username !== '' && credentials.password !== '') {
 			showLoadingMessage('Iniciando sesión...');
+			console.log('Re render');
 			login(credentials);
 		}
-	}, [credentials, login]);
+	}, [credentials]);
 
 	if (isLogged) {
 		// history.push('/page/dashboard');
