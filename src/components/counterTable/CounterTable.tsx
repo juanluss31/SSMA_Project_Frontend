@@ -17,17 +17,17 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../context/auth/auth.context';
 import { useData } from '../../context/data/data.context';
 import { useUtils } from '../../context/error/utils.context';
-import { UserModel } from '../../generated/graphql';
+import { UserModel, CounterModel } from '../../generated/graphql';
 import UserForm from '../userForm/userForm';
 
-const UserTable: React.FC = () => {
-	const { currentUser } = useAuth();
-	const { usersData, findUsers, deleteUser } = useData();
+const CounterTable: React.FC = () => {
+	// const { currentUser } = useAuth();
+	const { countersData } = useData();
 	const { showLoadingMessage } = useUtils();
 
 	const [showEditModal, setShowEditModal] = useState<boolean>(false);
 	const [presentDeleteAlert] = useIonAlert();
-	const [formData, setFormData] = useState<UserModel[]>();
+	const [formData, setFormData] = useState<CounterModel[]>();
 	const [editData, setEditData] = useState<UserModel | undefined>(undefined);
 
 	const onDissmiss = () => {
@@ -35,14 +35,9 @@ const UserTable: React.FC = () => {
 		setEditData(undefined);
 	};
 
-	const findRelatedUsers = useCallback(() => {
-		if (currentUser && currentUser.me) findUsers({ companyId: currentUser?.me?.company?.id! });
-	}, [currentUser, findUsers]);
-
 	useEffect(() => {
 		showLoadingMessage('Buscando usuarios registrados...');
-		findRelatedUsers();
-	}, [findRelatedUsers, showLoadingMessage]);
+	}, [showLoadingMessage]);
 
 	useEffect(() => {
 		if (editData !== undefined) {
@@ -52,10 +47,10 @@ const UserTable: React.FC = () => {
 	}, [editData]);
 
 	useEffect(() => {
-		if (usersData) {
-			setFormData(usersData);
+		if (countersData) {
+			setFormData(countersData);
 		}
-	}, [usersData]);
+	}, [countersData]);
 
 	return (
 		<>
@@ -74,12 +69,11 @@ const UserTable: React.FC = () => {
 						>
 							<IonCol size="1">Id</IonCol>
 							<IonCol size="2">Usuario</IonCol>
-							<IonCol size="3">Correo</IonCol>
-							<IonCol size="2">Nombre</IonCol>
-							<IonCol size="3">Apellidos</IonCol>
+							<IonCol size="3">Versión</IonCol>
+							<IonCol size="2">Capacidad</IonCol>
 							<IonCol size="1">Opciones</IonCol>
 						</IonRow>
-						{formData?.map((user, id) => {
+						{formData?.map((counter, id) => {
 							return (
 								<IonRow
 									key={id}
@@ -89,39 +83,38 @@ const UserTable: React.FC = () => {
 										lineHight: '0px',
 									}}
 								>
-									<IonCol size="1">{user.id}</IonCol>
-									<IonCol size="2">{user.username}</IonCol>
-									<IonCol size="3">{user.email}</IonCol>
-									<IonCol size="2">{user.firstname}</IonCol>
-									<IonCol size="3">{user.lastname}</IonCol>
+									<IonCol size="1">{counter.id}</IonCol>
+									<IonCol size="2">{counter.username}</IonCol>
+									<IonCol size="3">{counter.currentVersion}</IonCol>
+									<IonCol size="2">{counter.capacity}</IonCol>
 									<IonCol size="1">
 										<IonRow>
 											<IonCol>
 												<IonIcon
 													icon={createOutline}
 													style={{ fontSize: '24px' }}
-													onClick={() => {
-														setEditData(user);
-													}}
+													// onClick={() => {
+													// 	setEditData(user);
+													// }}
 												/>
 												<IonIcon
 													icon={closeCircleOutline}
 													style={{ fontSize: '24px' }}
-													onClick={() =>
-														presentDeleteAlert({
-															header: '¿Estás seguro?',
-															message: `Estás a punto de eliminar al usuario ${user.username}, y no se podrá recuperar.`,
-															buttons: [
-																'Cancelar',
-																{
-																	text: 'Aceptar',
-																	handler: () => {
-																		deleteUser({ userId: user.id });
-																	},
-																},
-															],
-														})
-													}
+													// onClick={() =>
+													// 	presentDeleteAlert({
+													// 		header: '¿Estás seguro?',
+													// 		message: `Estás a punto de eliminar al usuario ${user.username}, y no se podrá recuperar.`,
+													// 		buttons: [
+													// 			'Cancelar',
+													// 			{
+													// 				text: 'Aceptar',
+													// 				handler: () => {
+													// 					deleteUser({ userId: user.id });
+													// 				},
+													// 			},
+													// 		],
+													// 	})
+													// }
 												/>
 											</IonCol>
 										</IonRow>
@@ -131,25 +124,9 @@ const UserTable: React.FC = () => {
 						})}
 					</IonGrid>
 				</IonCardContent>
-
-				<div style={{ height: '50px' }}>
-					<IonFab
-						vertical="bottom"
-						horizontal="end"
-						onClick={() => {
-							console.log('Has hecho click: ', showEditModal);
-							setShowEditModal(true);
-						}}
-					>
-						<IonFabButton size="small">
-							<IonIcon icon={add} />
-						</IonFabButton>
-					</IonFab>
-				</div>
 			</IonCard>
-			<UserForm showModal={showEditModal} dismissModal={onDissmiss} userData={editData} />
 		</>
 	);
 };
 
-export default UserTable;
+export default CounterTable;

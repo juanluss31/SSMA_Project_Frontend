@@ -45,7 +45,7 @@ const Menu: React.FC = () => {
 			<IonHeader style={{ marginTop: '5%', textAlign: 'center' }}>
 				<IonToolbar>
 					<IonImg className="menuImg" src={image} />
-					<p style={{ color: 'white' }}>{currentUser?.me?.company.name}</p>
+					<p style={{ color: 'white' }}>{currentUser?.me?.company?.name}</p>
 				</IonToolbar>
 			</IonHeader>
 			<IonContent>

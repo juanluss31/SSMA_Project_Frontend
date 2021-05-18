@@ -27,6 +27,7 @@ export const Routes: React.FC = () => {
 				<Route path="/login" component={Login} />
 				<ProtectedRoute path="/page/dashboard" component={Dashboard} />
 				<ProtectedRoute path="/page/admin/users" role="Admin" component={Dashboard} />
+				<ProtectedRoute path="/page/admin/counters" role="Admin" component={Dashboard} />
 			</IonRouterOutlet>
 		</IonSplitPane>
 	);

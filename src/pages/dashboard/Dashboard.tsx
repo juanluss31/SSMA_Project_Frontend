@@ -19,6 +19,7 @@ import user from '../../img/defaultUser.png';
 import { spliPaneSubject } from '../../utils/splitpane.util';
 import { useLocation } from 'react-router-dom';
 import UserTable from '../../components/userTable/UserTable';
+import CounterTable from '../../components/counterTable/CounterTable';
 
 const Dashboard: React.FC = () => {
 	const { currentUser } = useAuth();
@@ -43,9 +44,8 @@ const Dashboard: React.FC = () => {
 			case '/page/admin/users':
 				// return <UserForm />;
 				return <UserTable />;
-			// return <ExploreContainer name="Página de Outbox" />;
-			// case 'Favorites':
-			// 	return <ExploreContainer name="Página de Favorites" />;
+			case '/page/admin/counters':
+				return <CounterTable />;
 			// case 'Archived':
 			// 	return <ExploreContainer name="Página de Archived" />;
 			// case 'Trash':

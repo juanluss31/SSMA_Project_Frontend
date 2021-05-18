@@ -1,0 +1,26 @@
+query findStatisticsFromCounters($countersIds: [Float!]!) {
+	findStatisticsFromCounters(countersIds: $countersIds) {
+		id
+		statistics {
+			id
+			datetime
+			entering
+			exiting
+		}
+	}
+}
+
+query findGraphicsStatistics($countersIds: [Float!]!) {
+	findGraphicsStatistics(countersIds: $countersIds) {
+		id
+		datetime
+		entering
+		exiting
+		counter {
+			id
+			username
+			currentVersion
+			capacity
+		}
+	}
+}

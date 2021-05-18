@@ -48,7 +48,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 	const [registerMutation] = useRegisterMutation({
 		onCompleted: data => {
 			showToastMessage(`Se ha registrado el usuario ${data.register.username} `, 'primary');
-			findUsers({ companyId: dataCurrent?.me?.company.id! });
+			findUsers({ companyId: dataCurrent?.me?.company?.id! });
 		},
 		onError: (err: ApolloError) => {
 			showToastMessage(err.message, 'danger');

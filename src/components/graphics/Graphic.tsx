@@ -1,12 +1,52 @@
 import { IonCard, IonCardContent } from '@ionic/react';
-import React from 'react';
-import { Bar } from 'react-chartjs-2';
+import React, { useEffect, useState } from 'react';
+import { Line } from 'react-chartjs-2';
 
-const Graphic: React.FC = () => {
+import { StatisticsModel } from '../../generated/graphql';
+
+interface GraphicsProps {
+	graphicData: StatisticsModel[];
+}
+
+const Graphic: React.FC<GraphicsProps> = ({ graphicData }) => {
+	const [label, setLabel] = useState<string[]>();
+	const [data, setData] = useState<string[]>();
+	const [counterName, setCounterName] = useState<string>();
+
+	// const data = {
+	// 	labels: ['1', '2', '3', '4', '5', '6', '7', '1', '2', '3', '4', '5', '6', '7'],
+	// 	datasets: [
+	// 		{
+	// 			label: 'My First Dataset',
+	// 			data: [65, 59, 80, 81, 56, 55, 40, 65, 59, 80, 81, 56, 55, 40],
+	// 			fill: false,
+	// 			borderColor: 'rgb(75, 192, 192)',
+	// 			tension: 0.1,
+	// 		},
+	// 	],
+	// };
+
+	useEffect(() => {
+		let parsedLabels: string[] = [];
+		let parsedData: string[] = [];
+		let date: Date;
+		graphicData
+			.slice()
+			.reverse()
+			.forEach(value => {
+				date = new Date(value.datetime);
+				parsedLabels.push(`${date.getHours()}:${date.getMinutes()}`);
+				parsedData.push(`${value.entering - value.exiting}`);
+			});
+		setLabel(parsedLabels);
+		setData(parsedData);
+		setCounterName(graphicData[0].counter.username);
+	}, [graphicData]);
+
 	return (
 		<IonCard>
 			<IonCardContent>
-				<Bar
+				{/* <Bar
 					data={{
 						labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
 						datasets: [
@@ -38,6 +78,20 @@ const Graphic: React.FC = () => {
 					options={{
 						responsive: true,
 						maintainAspectRatio: true,
+					}}
+				/> */}
+				<Line
+					data={{
+						labels: label,
+						datasets: [
+							{
+								label: counterName,
+								data: data,
+								fill: false,
+								borderColor: 'rgb(75, 192, 192)',
+								tension: 0.1,
+							},
+						],
 					}}
 				/>
 			</IonCardContent>

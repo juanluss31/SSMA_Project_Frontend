@@ -1,0 +1,8 @@
+query findAllCompanyCounters($companyId: Float!) {
+	findAllCompanyCounters(companyId: $companyId) {
+		id
+		username
+		currentVersion
+		capacity
+	}
+}

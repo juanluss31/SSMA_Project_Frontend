@@ -1,4 +1,4 @@
-import { barChartOutline, peopleOutline } from 'ionicons/icons';
+import { barChartOutline, eyeOutline, peopleOutline } from 'ionicons/icons';
 
 export interface AppPage {
 	url: string;
@@ -20,11 +20,12 @@ export const appPages: AppPage[] = [
 		icon: peopleOutline,
 		role: 'Admin',
 	},
-	// {
-	// 	title: 'Favorites',
-	// 	url: '/page/Favorites',
-	// 	icon: heartOutline,
-	// },
+	{
+		title: 'Administrar contadores',
+		url: '/page/admin/counters',
+		icon: eyeOutline,
+		role: 'Admin',
+	},
 	// {
 	// 	title: 'Archived',
 	// 	url: '/page/Archived',
